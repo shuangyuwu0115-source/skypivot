@@ -451,4 +451,133 @@ export default function SearchSection({
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
               {Object.entries(groupedTrainStations).map(([country, countryStations]) => (
-                <div key={
+                <div key={country}>
+                  <div className="px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-100">{country}</div>
+                  {countryStations.map((station) => (
+                    <SelectItem key={station.code} value={station.city}>
+                      {station.city} ({station.code})
+                    </SelectItem>
+                  ))}
+                </div>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="md:col-span-1 flex items-end justify-center pb-3">
+        <button onClick={handleSwapLocations} className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+          <ArrowRightLeft className="w-5 h-5 text-gray-600" />
+        </button>
+      </div>
+
+      <div className="md:col-span-3">
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('search.to')}</label>
+        <div className="relative">
+          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Select value={trainTo} onValueChange={setTrainTo}>
+            <SelectTrigger className="pl-10 h-12">
+              <SelectValue placeholder={t('search.to')} />
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
+              {Object.entries(groupedTrainStations).map(([country, countryStations]) => (
+                <div key={country}>
+                  <div className="px-2 py-1 text-xs font-semibold text-gray-500 bg-gray-100">{country}</div>
+                  {countryStations.map((station) => (
+                    <SelectItem key={station.code} value={station.city}>
+                      {station.city} ({station.code})
+                    </SelectItem>
+                  ))}
+                </div>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="md:col-span-3">
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('search.departDate')}</label>
+        <div className="relative">
+          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Input type="date" value={trainDate} min={today} onChange={(e) => setTrainDate(e.target.value)} className="pl-10 h-12" />
+        </div>
+      </div>
+
+      <div className="md:col-span-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('search.passengers')}</label>
+        <Select value={trainPassengers} onValueChange={setTrainPassengers}>
+          <SelectTrigger className="h-12">
+            <Users className="w-5 h-5 text-gray-400 mr-2" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+              <SelectItem key={num} value={num.toString()}>{num}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="md:col-span-12">
+        <Button onClick={handleSearch} disabled={isLoading || !trainFrom || !trainTo || !trainDate}
+          className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-lg rounded-xl">
+          {isLoading ? <span className="flex items-center gap-2"><span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />{t('search.searching')}</span>
+            : <span className="flex items-center gap-2"><Search className="w-5 h-5" />{t('search.searchButton')}</span>}
+        </Button>
+      </div>
+    </div>
+  )
+
+  return (
+    <section className="relative min-h-[650px] flex items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920)' }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 py-16">
+        <div className="text-center mb-10">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+            {t('search.title', { highlight: '' }).replace('{{highlight}}', '')}
+            <span className="text-blue-400">{t('search.title', { highlight: '' }).includes('比价') ? '比价' : 'Comparison'}</span>
+          </h1>
+          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
+            {t('search.subtitle')}
+          </p>
+        </div>
+
+        <Card className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-8">
+          <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+            {services.map((service) => (
+              <button
+                key={service.id}
+                onClick={() => onServiceChange(service.id)}
+                className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all whitespace-nowrap ${
+                  activeService === service.id
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                <service.icon className="w-5 h-5" />
+                {t(service.labelKey)}
+              </button>
+            ))}
+          </div>
+
+          {activeService === 'flights' && renderFlightSearch()}
+          {activeService === 'hotels' && renderHotelSearch()}
+          {activeService === 'cars' && renderCarSearch()}
+          {activeService === 'trains' && renderTrainSearch()}
+        </Card>
+
+        <div className="mt-8 flex flex-wrap justify-center gap-6 text-white/70 text-sm">
+          <div className="flex items-center gap-2"><span className="w-2 h-2 bg-green-400 rounded-full" />{t('search.trust.realtime')}</div>
+          <div className="flex items-center gap-2"><span className="w-2 h-2 bg-green-400 rounded-full" />{t('search.trust.transparent')}</div>
+          <div className="flex items-center gap-2"><span className="w-2 h-2 bg-green-400 rounded-full" />{t('search.trust.official')}</div>
+          <div className="flex items-center gap-2"><span className="w-2 h-2 bg-green-400 rounded-full" />{t('search.trust.noHidden')}</div>
+        </div>
+      </div>
+    </section>
+  )
+}
