@@ -1,148 +1,290 @@
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { 
-  Plane, 
-  Calendar, 
-  Users, 
-  ArrowRightLeft, 
-  Search,
-  MapPin,
-  Hotel,
-  Car,
-  Train,
-  BedDouble,
-  User
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { airports } from '@/data/airports'
-import { trainStations } from '@/data/trainStations'
-import type { ServiceType, FlightSearchParams, HotelSearchParams, CarSearchParams, TrainSearchParams } from '@/types'
+import { useState } from 'react';
+import { Search, Calendar, Users, MapPin, Car, Train, Plane, Building2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { airports, searchAirports } from '@/data/airports';
+import { trainStations, searchStations } from '@/data/trainStations';
 
 interface SearchSectionProps {
-  activeService: ServiceType
-  onServiceChange: (service: ServiceType) => void
-  onFlightSearch: (params: FlightSearchParams) => void
-  onHotelSearch: (params: HotelSearchParams) => void
-  onCarSearch: (params: CarSearchParams) => void
-  onTrainSearch: (params: TrainSearchParams) => void
-  isLoading?: boolean
+  serviceType: 'flights' | 'hotels' | 'cars' | 'trains';
+  onSearch: () => void;
+  language?: 'zh' | 'en';
 }
 
-const services = [
-  { id: 'flights' as ServiceType, icon: Plane, labelKey: 'nav.flights' },
-  { id: 'hotels' as ServiceType, icon: Hotel, labelKey: 'nav.hotels' },
-  { id: 'cars' as ServiceType, icon: Car, labelKey: 'nav.cars' },
-  { id: 'trains' as ServiceType, icon: Train, labelKey: 'nav.trains' },
-]
+export function SearchSection({ serviceType, onSearch, language = 'zh' }: SearchSectionProps) {
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [departureDate, setDepartureDate] = useState('');
+  const [returnDate, setReturnDate] = useState('');
+  const [passengers, setPassengers] = useState(1);
+  const [showFromDropdown, setShowFromDropdown] = useState(false);
+  const [showToDropdown, setShowToDropdown] = useState(false);
+  const [fromResults, setFromResults] = useState(airports.slice(0, 5));
+  const [toResults, setToResults] = useState(airports.slice(5, 10));
 
-export default function SearchSection({ 
-  activeService, 
-  onServiceChange,
-  onFlightSearch,
-  onHotelSearch,
-  onCarSearch,
-  onTrainSearch,
-  isLoading 
-}: SearchSectionProps) {
-  const { t } = useTranslation()
-  
-  const [tripType, setTripType] = useState<'oneWay' | 'roundTrip'>('roundTrip')
-  const [flightFrom, setFlightFrom] = useState('')
-  const [flightTo, setFlightTo] = useState('')
-  const [flightDepartDate, setFlightDepartDate] = useState('')
-  const [flightReturnDate, setFlightReturnDate] = useState('')
-  const [flightPassengers, setFlightPassengers] = useState('1')
-  const [cabinClass, setCabinClass] = useState<'economy' | 'business' | 'first'>('economy')
-  
-  const [hotelDestination, setHotelDestination] = useState('')
-  const [hotelCheckIn, setHotelCheckIn] = useState('')
-  const [hotelCheckOut, setHotelCheckOut] = useState('')
-  const [hotelGuests, setHotelGuests] = useState('2')
-  const [hotelRooms, setHotelRooms] = useState('1')
-  
-  const [carPickup, setCarPickup] = useState('')
-  const [carReturn, setCarReturn] = useState('')
-  const [carPickupDate, setCarPickupDate] = useState('')
-  const [carReturnDate, setCarReturnDate] = useState('')
-  const [carDriverAge, setCarDriverAge] = useState('25')
-  
-  const [trainFrom, setTrainFrom] = useState('')
-  const [trainTo, setTrainTo] = useState('')
-  const [trainDate, setTrainDate] = useState('')
-  const [trainPassengers, setTrainPassengers] = useState('1')
-
-  const today = new Date().toISOString().split('T')[0]
-
-  const handleSwapLocations = () => {
-    if (activeService === 'flights') {
-      setFlightFrom(flightTo)
-      setFlightTo(flightFrom)
-    } else if (activeService === 'trains') {
-      setTrainFrom(trainTo)
-      setTrainTo(trainFrom)
+  const t = {
+    zh: {
+      from: '出发地',
+      to: '目的地',
+      departure: '出发日期',
+      return: '返回日期',
+      checkIn: '入住日期',
+      checkOut: '退房日期',
+      pickup: '取车日期',
+      dropoff: '还车日期',
+      passengers: '乘客',
+      rooms: '房间',
+      travelers: '旅客',
+      search: '搜索',
+      roundTrip: '往返',
+      oneWay: '单程',
+      economy: '经济舱',
+      business: '商务舱',
+      firstClass: '头等舱',
+      pickupLocation: '取车地点',
+      dropoffLocation: '还车地点',
+      driverAge: '驾驶员年龄',
+      whereTo: '您想去哪里？',
+      whereFrom: '您从哪里出发？',
+      enterDestination: '输入目的地',
+      enterCity: '输入城市',
+      selectDate: '选择日期',
+      adult: '成人',
+      child: '儿童'
+    },
+    en: {
+      from: 'From',
+      to: 'To',
+      departure: 'Departure',
+      return: 'Return',
+      checkIn: 'Check-in',
+      checkOut: 'Check-out',
+      pickup: 'Pick-up',
+      dropoff: 'Drop-off',
+      passengers: 'Passengers',
+      rooms: 'Rooms',
+      travelers: 'Travelers',
+      search: 'Search',
+      roundTrip: 'Round Trip',
+      oneWay: 'One Way',
+      economy: 'Economy',
+      business: 'Business',
+      firstClass: 'First Class',
+      pickupLocation: 'Pick-up Location',
+      dropoffLocation: 'Drop-off Location',
+      driverAge: 'Driver Age',
+      whereTo: 'Where to?',
+      whereFrom: 'Where from?',
+      enterDestination: 'Enter destination',
+      enterCity: 'Enter city',
+      selectDate: 'Select date',
+      adult: 'Adult',
+      child: 'Child'
     }
-  }
+  }[language];
 
-  const handleSearch = () => {
-    switch (activeService) {
-      case 'flights':
-        if (flightFrom && flightTo && flightDepartDate) {
-          onFlightSearch({
-            from: flightFrom,
-            to: flightTo,
-            departDate: flightDepartDate,
-            returnDate: tripType === 'roundTrip' ? flightReturnDate : undefined,
-            passengers: parseInt(flightPassengers),
-            cabinClass,
-            tripType
-          })
-        }
-        break
-      case 'hotels':
-        if (hotelDestination && hotelCheckIn && hotelCheckOut) {
-          onHotelSearch({
-            destination: hotelDestination,
-            checkIn: hotelCheckIn,
-            checkOut: hotelCheckOut,
-            guests: parseInt(hotelGuests),
-            rooms: parseInt(hotelRooms)
-          })
-        }
-        break
-      case 'cars':
-        if (carPickup && carPickupDate && carReturnDate) {
-          onCarSearch({
-            pickupLocation: carPickup,
-            returnLocation: carReturn || carPickup,
-            pickupDate: carPickupDate,
-            returnDate: carReturnDate,
-            driverAge: parseInt(carDriverAge)
-          })
-        }
-        break
-      case 'trains':
-        if (trainFrom && trainTo && trainDate) {
-          onTrainSearch({
-            from: trainFrom,
-            to: trainTo,
-            date: trainDate,
-            passengers: parseInt(trainPassengers)
-          })
-        }
-        break
+  const handleFromSearch = (query: string) => {
+    setFrom(query);
+    if (serviceType === 'trains') {
+      setFromResults(searchStations(query).slice(0, 5));
+    } else {
+      setFromResults(searchAirports(query).slice(0, 5));
     }
-  }
+    setShowFromDropdown(true);
+  };
 
-  const groupedAirports = airports.reduce((acc, airport) => {
+  const handleToSearch = (query: string) => {
+    setTo(query);
+    if (serviceType === 'trains') {
+      setToResults(searchStations(query).slice(0, 5));
+    } else {
+      setToResults(searchAirports(query).slice(0, 5));
+    }
+    setShowToDropdown(true);
+  };
+
+  const selectFrom = (location: string) => {
+    setFrom(location);
+    setShowFromDropdown(false);
+  };
+
+  const selectTo = (location: string) => {
+    setTo(location);
+    setShowToDropdown(false);
+  };
+
+  const swapLocations = () => {
+    const temp = from;
+    setFrom(to);
+    setTo(temp);
+  };
+
+  const getServiceIcon = () => {
+    switch (serviceType) {
+      case 'flights': return <Plane className="w-5 h-5" />;
+      case 'hotels': return <Building2 className="w-5 h-5" />;
+      case 'cars': return <Car className="w-5 h-5" />;
+      case 'trains': return <Train className="w-5 h-5" />;
+    }
+  };
+
+  const today = new Date().toISOString().split('T')[0];
+
+  return (
+    <div className="w-full max-w-5xl mx-auto px-4 pb-12">
+      <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-4 md:p-6 border border-white/50">
+        {/* Trip Type Selector - Only for flights */}
+        {serviceType === 'flights' && (
+          <div className="flex gap-2 mb-4 flex-wrap">
+            <button className="px-4 py-2 rounded-full bg-sky-500 text-white text-sm font-medium">
+              {t.roundTrip}
+            </button>
+            <button className="px-4 py-2 rounded-full bg-slate-100 text-slate-600 text-sm font-medium hover:bg-slate-200">
+              {t.oneWay}
+            </button>
+            <select className="px-4 py-2 rounded-full bg-slate-100 text-slate-600 text-sm font-medium border-none outline-none">
+              <option>{t.economy}</option>
+              <option>{t.business}</option>
+              <option>{t.firstClass}</option>
+            </select>
+          </div>
+        )}
+
+        {/* Search Form */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+          {/* From */}
+          <div className="md:col-span-3 relative">
+            <label className="block text-xs font-medium text-slate-500 mb-1">
+              {serviceType === 'cars' ? t.pickupLocation : t.from}
+            </label>
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Input
+                type="text"
+                value={from}
+                onChange={(e) => handleFromSearch(e.target.value)}
+                onFocus={() => setShowFromDropdown(true)}
+                placeholder={serviceType === 'hotels' ? t.enterDestination : t.whereFrom}
+                className="pl-10 h-12 bg-slate-50 border-slate-200 focus:border-sky-500 focus:ring-sky-500"
+              />
+              {showFromDropdown && fromResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-slate-200 z-50 max-h-60 overflow-auto">
+                  {fromResults.map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => selectFrom(`${item.city} (${item.code})`)}
+                      className="w-full px-4 py-3 text-left hover:bg-slate-50 border-b border-slate-100 last:border-0"
+                    >
+                      <div className="font-medium text-slate-800">{item.city}</div>
+                      <div className="text-sm text-slate-500">{item.name}</div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Swap Button */}
+          <div className="hidden md:flex md:col-span-1 items-end justify-center pb-3">
+            <button 
+              onClick={swapLocations}
+              className="p-2 rounded-full bg-slate-100 hover:bg-sky-100 text-slate-500 hover:text-sky-600 transition-colors"
+            >
+              ⇄
+            </button>
+          </div>
+
+          {/* To */}
+          <div className="md:col-span-3 relative">
+            <label className="block text-xs font-medium text-slate-500 mb-1">
+              {serviceType === 'cars' ? t.dropoffLocation : t.to}
+            </label>
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Input
+                type="text"
+                value={to}
+                onChange={(e) => handleToSearch(e.target.value)}
+                onFocus={() => setShowToDropdown(true)}
+                placeholder={serviceType === 'hotels' ? t.enterCity : t.whereTo}
+                className="pl-10 h-12 bg-slate-50 border-slate-200 focus:border-sky-500 focus:ring-sky-500"
+              />
+              {showToDropdown && toResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-slate-200 z-50 max-h-60 overflow-auto">
+                  {toResults.map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => selectTo(`${item.city} (${item.code})`)}
+                      className="w-full px-4 py-3 text-left hover:bg-slate-50 border-b border-slate-100 last:border-0"
+                    >
+                      <div className="font-medium text-slate-800">{item.city}</div>
+                      <div className="text-sm text-slate-500">{item.name}</div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Dates */}
+          <div className="md:col-span-3">
+            <label className="block text-xs font-medium text-slate-500 mb-1">
+              {serviceType === 'hotels' ? t.checkIn : serviceType === 'cars' ? t.pickup : t.departure}
+            </label>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Input
+                type="date"
+                value={departureDate}
+                min={today}
+                onChange={(e) => setDepartureDate(e.target.value)}
+                className="pl-10 h-12 bg-slate-50 border-slate-200 focus:border-sky-500 focus:ring-sky-500"
+              />
+            </div>
+          </div>
+
+          {/* Passengers/Return Date */}
+          <div className="md:col-span-2">
+            <label className="block text-xs font-medium text-slate-500 mb-1">
+              {serviceType === 'hotels' ? t.rooms : serviceType === 'cars' ? t.driverAge : t.passengers}
+            </label>
+            <div className="relative">
+              <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              {serviceType === 'cars' ? (
+                <select className="w-full pl-10 h-12 bg-slate-50 border border-slate-200 rounded-md focus:border-sky-500 focus:ring-sky-500">
+                  <option>25-70 {t.adult}</option>
+                  <option>21-24</option>
+                  <option>18-20</option>
+                </select>
+              ) : (
+                <select 
+                  value={passengers}
+                  onChange={(e) => setPassengers(Number(e.target.value))}
+                  className="w-full pl-10 h-12 bg-slate-50 border border-slate-200 rounded-md focus:border-sky-500 focus:ring-sky-500"
+                >
+                  {[1,2,3,4,5,6,7,8].map(n => (
+                    <option key={n} value={n}>{n} {t.adult}{n > 1 ? 's' : ''}</option>
+                  ))}
+                </select>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Search Button */}
+        <div className="mt-4 flex justify-center">
+          <Button 
+            onClick={onSearch}
+            className="w-full md:w-auto px-12 py-6 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center gap-3"
+          >
+            {getServiceIcon()}
+            {t.search}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
     if (!acc[airport.country]) {
       acc[airport.country] = []
     }
