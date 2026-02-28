@@ -1,61 +1,71 @@
-import { useTranslation } from 'react-i18next'
-import { ArrowRight, MapPin, Building2 } from 'lucide-react'
-import { Card } from '@/components/ui/card'
-import { popularHotelDestinations } from '@/data/hotels'
+import { Building2, MapPin, Star } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface PopularHotelsSectionProps {
-  onDestinationClick?: (destination: string) => void
+  language?: 'zh' | 'en';
 }
 
-export default function PopularHotelsSection({ onDestinationClick }: PopularHotelsSectionProps) {
-  const { t } = useTranslation()
+export function PopularHotelsSection({ language = 'zh' }: PopularHotelsSectionProps) {
+  const t = {
+    zh: {
+      title: '热门酒店目的地',
+      subtitle: '发现全球最受欢迎的住宿城市',
+      from: '起'
+    },
+    en: {
+      title: 'Popular Hotel Destinations',
+      subtitle: 'Discover the world\'s most popular accommodation cities',
+      from: 'from'
+    }
+  }[language];
+
+  const destinations = [
+    { city: '东京', country: '日本', price: 580, rating: 4.8, image: '🗼' },
+    { city: '巴黎', country: '法国', price: 980, rating: 4.7, image: '🗼' },
+    { city: '纽约', country: '美国', price: 1280, rating: 4.6, image: '🗽' },
+    { city: '新加坡', country: '新加坡', price: 680, rating: 4.8, image: '🦁' },
+    { city: '迪拜', country: '阿联酋', price: 880, rating: 4.9, image: '🏙️' },
+    { city: '悉尼', country: '澳大利亚', price: 780, rating: 4.7, image: '🦘' },
+  ];
 
   return (
-    <section className="py-16 bg-white">
-      <div className="max-w-6xl mx-auto px-4">
+    <section className="py-16 px-4 bg-white/50">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{t('popularHotels.title')}</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{t('popularHotels.subtitle')}</p>
+          <h2 className="text-3xl font-bold text-slate-800 mb-4">{t.title}</h2>
+          <p className="text-slate-500 text-lg">{t.subtitle}</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {popularHotelDestinations.map((dest, index) => (
-            <Card key={index} className="group overflow-hidden cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1"
-              onClick={() => onDestinationClick?.(dest.city)}>
-              <div className="relative h-40 overflow-hidden">
-                <img src={dest.image} alt={dest.city} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3">
-                  <div className="flex items-center gap-2 text-white">
-                    <MapPin className="w-4 h-4" />
-                    <span className="font-semibold">{dest.city}</span>
-                  </div>
-                  <p className="text-white/80 text-sm">{dest.country}</p>
-                </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {destinations.map((dest, index) => (
+            <Card key={index} className="group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+              <div className="h-40 bg-gradient-to-br from-sky-100 to-blue-200 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform">
+                {dest.image}
               </div>
-
-              <div className="p-4">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-bold text-lg text-slate-800">{dest.city}</h3>
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm text-slate-600">{dest.rating}</span>
+                  </div>
+                </div>
+                <p className="text-slate-500 text-sm mb-3">{dest.country}</p>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-gray-500">
+                  <div className="flex items-center gap-1 text-slate-400 text-sm">
                     <Building2 className="w-4 h-4" />
-                    <span className="text-sm">{dest.hotelCount.toLocaleString()}+ 酒店</span>
+                    <span>1000+ 酒店</span>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-blue-600">¥{dest.lowestPrice}</p>
-                    <p className="text-xs text-gray-400">{t('popularHotels.perNight')}起</p>
+                    <span className="text-xs text-slate-400">{t.from}</span>
+                    <span className="text-xl font-bold text-sky-600 ml-1">¥{dest.price}</span>
                   </div>
                 </div>
-              </div>
+              </CardContent>
             </Card>
           ))}
         </div>
-
-        <div className="text-center mt-10">
-          <button className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors">
-            {t('popularHotels.viewMore')}<ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
       </div>
     </section>
-  )
+  );
 }
