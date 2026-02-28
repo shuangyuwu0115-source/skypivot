@@ -1,4 +1,4 @@
-import i18n from 'i18next';
+import './i18n/index';
 import { initReactI18next } from 'react-i18next';
 
 // 中文翻译
