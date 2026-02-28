@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Toaster, toast } from 'sonner'
-import './i18n'
+import '@/i18n';
 import SearchSection from './sections/SearchSection'
 import ResultsSection from './sections/ResultsSection'
 import HotelResultsSection from './sections/HotelResultsSection'
