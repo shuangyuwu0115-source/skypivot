@@ -1,0 +1,104 @@
+/* Custom styles for SkyPivot */
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Animation for loading */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Platform colors */
+.platform-ctrip { color: #2577E3; }
+.platform-qunar { color: #00A4FF; }
+.platform-fliggy { color: #FF6A00; }
+.platform-tongcheng { color: #00BFFF; }
+.platform-booking { color: #003580; }
+.platform-expedia { color: #FFC94C; }
+.platform-skyscanner { color: #0770E3; }
+.platform-kayak { color: #FF690F; }
+.platform-trip { color: #287DFA; }
+.platform-google { color: #4285F4; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .search-card {
+    margin: 0 -1rem;
+    border-radius: 0;
+  }
+}
+
+/* Focus styles */
+input:focus,
+select:focus,
+button:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #3B82F6;
+}
+
+/* Date picker custom styles */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
