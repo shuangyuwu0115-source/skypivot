@@ -14,12 +14,35 @@ import './App.css';
 
 type ServiceType = 'flights' | 'hotels' | 'cars' | 'trains';
 
+// 搜索参数类型
+interface SearchParams {
+  from: string;
+  to: string;
+  departureDate: string;
+  returnDate: string;
+  passengers: number;
+  tripType: 'roundTrip' | 'oneWay';
+  cabinClass: 'economy' | 'business' | 'first';
+}
+
 function App() {
   const [serviceType, setServiceType] = useState<ServiceType>('flights');
   const [hasSearched, setHasSearched] = useState(false);
   const [language, setLanguage] = useState<'zh' | 'en'>('zh');
+  
+  // 添加搜索参数状态
+  const [searchParams, setSearchParams] = useState<SearchParams>({
+    from: '',
+    to: '',
+    departureDate: '',
+    returnDate: '',
+    passengers: 1,
+    tripType: 'roundTrip',
+    cabinClass: 'economy'
+  });
 
-  const handleSearch = () => {
+  const handleSearch = (params: SearchParams) => {
+    setSearchParams(params);
     setHasSearched(true);
     setTimeout(() => {
       const resultsSection = document.getElementById('results-section');
@@ -94,21 +117,41 @@ function App() {
         </div>
       </div>
 
-      {/* Search Section */}
+      {/* Search Section - 传递 onSearch 回调 */}
       <SearchSection 
         serviceType={serviceType} 
         onSearch={handleSearch}
         language={language}
       />
 
-      {/* Results Section */}
+      {/* Results Section - 传递搜索参数 */}
       {hasSearched && (
         <div id="results-section" className="py-12 px-4">
           <div className="max-w-6xl mx-auto">
-            {serviceType === 'flights' && <ResultsSection language={language} />}
-            {serviceType === 'hotels' && <HotelResultsSection language={language} />}
-            {serviceType === 'cars' && <CarResultsSection language={language} />}
-            {serviceType === 'trains' && <TrainResultsSection language={language} />}
+            {serviceType === 'flights' && (
+              <ResultsSection 
+                language={language} 
+                searchParams={searchParams}
+              />
+            )}
+            {serviceType === 'hotels' && (
+              <HotelResultsSection 
+                language={language}
+                searchParams={searchParams}
+              />
+            )}
+            {serviceType === 'cars' && (
+              <CarResultsSection 
+                language={language}
+                searchParams={searchParams}
+              />
+            )}
+            {serviceType === 'trains' && (
+              <TrainResultsSection 
+                language={language}
+                searchParams={searchParams}
+              />
+            )}
           </div>
         </div>
       )}
@@ -123,10 +166,7 @@ function App() {
         </>
       )}
 
-      {/* Platforms Section */}
       <PlatformsSection language={language} />
-
-      {/* Footer */}
       <Footer language={language} />
     </div>
   );
