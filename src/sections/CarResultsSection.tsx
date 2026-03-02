@@ -4,11 +4,24 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-interface CarResultsSectionProps {
-  language?: 'zh' | 'en';
+interface SearchParams {
+  from: string;
+  to: string;
+  hotelBrand: string;
+  departureDate: string;
+  returnDate: string;
+  passengers: number;
+  tripType: 'roundTrip' | 'oneWay';
+  cabinClass: 'economy' | 'business' | 'first';
+  isDomestic: boolean;
 }
 
-export function CarResultsSection({ language = 'zh' }: CarResultsSectionProps) {
+interface CarResultsSectionProps {
+  language?: 'zh' | 'en';
+  searchParams: SearchParams;
+}
+
+export function CarResultsSection({ language = 'zh', searchParams }: CarResultsSectionProps) {
   const [sortBy, setSortBy] = useState<'recommended' | 'price' | 'rating'>('recommended');
   
   const t = {
@@ -20,12 +33,11 @@ export function CarResultsSection({ language = 'zh' }: CarResultsSectionProps) {
       rating: '评分',
       bookNow: '去预订',
       perDay: '每天',
-      platforms: {
-        hertz: 'Hertz',
-        enterprise: 'Enterprise',
-        rentalcars: 'Rentalcars',
-        sixt: 'SIXT'
-      }
+      unlimited: '无限里程',
+      insurance: '含保险',
+      auto: '自动挡',
+      domestic: '国内租车',
+      international: '国际租车'
     },
     en: {
       title: 'Car Rental Comparison Results',
@@ -35,27 +47,42 @@ export function CarResultsSection({ language = 'zh' }: CarResultsSectionProps) {
       rating: 'Rating',
       bookNow: 'Book Now',
       perDay: 'per day',
-      platforms: {
-        hertz: 'Hertz',
-        enterprise: 'Enterprise',
-        rentalcars: 'Rentalcars',
-        sixt: 'SIXT'
-      }
+      unlimited: 'Unlimited Miles',
+      insurance: 'Insurance Included',
+      auto: 'Automatic',
+      domestic: 'Domestic Rental',
+      international: 'International Rental'
     }
   }[language];
 
-  // 纯跳转链接（无联盟追踪）
-  const carPlatforms = [
-    { name: t.platforms.hertz, url: 'https://www.hertz.com', color: 'bg-yellow-500' },
-    { name: t.platforms.enterprise, url: 'https://www.enterprise.com', color: 'bg-green-600' },
-    { name: t.platforms.rentalcars, url: 'https://www.rentalcars.com', color: 'bg-orange-500' },
-    { name: t.platforms.sixt, url: 'https://www.sixt.com', color: 'bg-red-600' }
+  // 国内租车平台
+  const domesticPlatforms = [
+    { name: '神州租车', url: 'https://www.zuche.com', color: 'bg-blue-600' },
+    { name: '一嗨租车', url: 'https://www.1hai.cn', color: 'bg-green-600' },
+    { name: '携程租车', url: 'https://car.ctrip.com', color: 'bg-blue-500' },
+    { name: '悟空租车', url: 'https://www.wukongzuche.com', color: 'bg-orange-500' },
+    { name: '凹凸租车', url: 'https://www.atzuche.com', color: 'bg-red-500' },
+    { name: '大方租车', url: 'https://www.dafang24.com', color: 'bg-purple-600' }
   ];
 
+  // 国际租车平台
+  const internationalPlatforms = [
+    { name: 'Hertz', url: 'https://www.hertz.com', color: 'bg-yellow-500' },
+    { name: 'Enterprise', url: 'https://www.enterprise.com', color: 'bg-green-600' },
+    { name: 'Avis', url: 'https://www.avis.com', color: 'bg-red-600' },
+    { name: 'Budget', url: 'https://www.budget.com', color: 'bg-orange-500' },
+    { name: 'Europcar', url: 'https://www.europcar.com', color: 'bg-green-500' },
+    { name: 'SIXT', url: 'https://www.sixt.com', color: 'bg-red-700' }
+  ];
+
+  // 根据目的地判断使用国内还是国际平台
+  const carPlatforms = searchParams.isDomestic ? domesticPlatforms : internationalPlatforms;
+  const locationType = searchParams.isDomestic ? t.domestic : t.international;
+
   const cars = [
-    { model: '丰田卡罗拉', type: '经济型', seats: 5, luggage: 2, price: 280, rating: 4.6 },
-    { model: '本田CR-V', type: 'SUV', seats: 5, luggage: 4, price: 450, rating: 4.8 },
-    { model: '奔驰E级', type: '豪华型', seats: 5, luggage: 3, price: 880, rating: 4.9 },
+    { model: searchParams.isDomestic ? '大众朗逸' : 'Toyota Corolla', type: '经济型', seats: 5, luggage: 2, price: searchParams.isDomestic ? 180 : 45, rating: 4.6 },
+    { model: searchParams.isDomestic ? '本田CR-V' : 'Honda CR-V', type: 'SUV', seats: 5, luggage: 4, price: searchParams.isDomestic ? 350 : 65, rating: 4.8 },
+    { model: searchParams.isDomestic ? '奥迪A6L' : 'BMW 5 Series', type: '豪华型', seats: 5, luggage: 3, price: searchParams.isDomestic ? 680 : 120, rating: 4.9 },
   ];
 
   return (
@@ -63,7 +90,7 @@ export function CarResultsSection({ language = 'zh' }: CarResultsSectionProps) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">{t.title}</h2>
-          <p className="text-slate-500">{t.subtitle}</p>
+          <p className="text-slate-500">{searchParams.to || '目的地'} | {locationType}</p>
         </div>
         <div className="flex gap-2">
           {(['recommended', 'price', 'rating'] as const).map((sort) => (
@@ -94,14 +121,16 @@ export function CarResultsSection({ language = 'zh' }: CarResultsSectionProps) {
                   <div className="flex gap-4 text-sm text-slate-600">
                     <span className="flex items-center gap-1"><Users className="w-4 h-4" />{car.seats}座</span>
                     <span className="flex items-center gap-1"><Briefcase className="w-4 h-4" />{car.luggage}行李</span>
-                    <Badge variant="outline" className="text-xs">自动挡</Badge>
-                    <Badge variant="outline" className="text-xs">无限里程</Badge>
+                    <Badge variant="outline" className="text-xs">{t.auto}</Badge>
+                    <Badge variant="outline" className="text-xs">{t.unlimited}</Badge>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-sky-600">¥{car.price}</div>
+                  <div className="text-3xl font-bold text-sky-600">
+                    {searchParams.isDomestic ? '¥' : '$'}{car.price}
+                  </div>
                   <div className="text-sm text-slate-400 mb-3">/{t.perDay}</div>
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex gap-2 flex-wrap max-w-xs justify-end">
                     {carPlatforms.map((platform, idx) => (
                       <Button 
                         key={idx}
