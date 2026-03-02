@@ -22,10 +22,26 @@ export function PopularTrainsSection({ language = 'zh' }: PopularTrainsSectionPr
   }[language];
 
   const routes = [
-    { from: '北京', to: '上海', duration: '4h28m', type: '高铁', image: '🚄', url: 'https://www.12306.cn' },
-    { from: '上海', to: '杭州', duration: '1h', type: '高铁', image: '🚅', url: 'https://www.ctrip.com' },
-    { from: '广州', to: '深圳', duration: '0.5h', type: '高铁', image: '🚆', url: 'https://www.12306.cn' },
-    { from: '成都', to: '重庆', duration: '1.5h', type: '高铁', image: '🚂', url: 'https://www.qunar.com' },
+    // 国内线路
+    { from: '北京', to: '上海', duration: '4h28m', type: '高铁', image: '🚄', url: 'https://www.12306.cn', region: '国内' },
+    { from: '上海', to: '杭州', duration: '1h', type: '高铁', image: '🚅', url: 'https://www.ctrip.com', region: '国内' },
+    { from: '广州', to: '深圳', duration: '0.5h', type: '高铁', image: '🚆', url: 'https://www.12306.cn', region: '国内' },
+    { from: '成都', to: '重庆', duration: '1.5h', type: '高铁', image: '🚂', url: 'https://www.qunar.com', region: '国内' },
+    
+    // 海外线路 - 日本
+    { from: '东京', to: '大阪', duration: '2h30m', type: '新干线', image: '🚅', url: 'https://www.jrpass.com', region: '日本' },
+    { from: '东京', to: '京都', duration: '2h15m', type: '新干线', image: '🚅', url: 'https://www.jrpass.com', region: '日本' },
+    
+    // 海外线路 - 欧洲
+    { from: '伦敦', to: '巴黎', duration: '2h16m', type: '欧洲之星', image: '🚂', url: 'https://www.eurostar.com', region: '欧洲' },
+    { from: '巴黎', to: '尼斯', duration: '5h58m', type: 'TGV', image: '🚄', url: 'https://www.sncf-connect.com', region: '法国' },
+    { from: '法兰克福', to: '慕尼黑', duration: '3h30m', type: 'ICE', image: '🚆', url: 'https://www.bahn.com', region: '德国' },
+    { from: '罗马', to: '米兰', duration: '2h55m', type: 'Frecciarossa', image: '🚄', url: 'https://www.trenitalia.com', region: '意大利' },
+    { from: '马德里', to: '巴塞罗那', duration: '2h30m', type: 'AVE', image: '🚅', url: 'https://www.renfe.com', region: '西班牙' },
+    { from: '苏黎世', to: '米兰', duration: '3h26m', type: 'EuroCity', image: '🚂', url: 'https://www.sbb.ch', region: '瑞士' },
+    
+    // 海外线路 - 其他
+    { from: '莫斯科', to: '圣彼得堡', duration: '3h30m', type: '游隼号', image: '🚄', url: 'https://www.rzd.ru', region: '俄罗斯' },
   ];
 
   const handleClick = (url: string) => {
@@ -72,6 +88,7 @@ export function PopularTrainsSection({ language = 'zh' }: PopularTrainsSectionPr
                       <div className="flex items-center gap-2 text-sm text-slate-500 mt-1">
                         <Train className="w-4 h-4" />
                         <span>{route.type}</span>
+                        <span className="text-xs px-2 py-0.5 bg-slate-100 rounded-full">{route.region}</span>
                       </div>
                     </div>
                   </div>
