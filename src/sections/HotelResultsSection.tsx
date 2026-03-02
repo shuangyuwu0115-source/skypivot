@@ -4,11 +4,24 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-interface HotelResultsSectionProps {
-  language?: 'zh' | 'en';
+interface SearchParams {
+  from: string;
+  to: string;
+  hotelBrand: string;
+  departureDate: string;
+  returnDate: string;
+  passengers: number;
+  tripType: 'roundTrip' | 'oneWay';
+  cabinClass: 'economy' | 'business' | 'first';
+  isDomestic: boolean;
 }
 
-export function HotelResultsSection({ language = 'zh' }: HotelResultsSectionProps) {
+interface HotelResultsSectionProps {
+  language?: 'zh' | 'en';
+  searchParams: SearchParams;
+}
+
+export function HotelResultsSection({ language = 'zh', searchParams }: HotelResultsSectionProps) {
   const [sortBy, setSortBy] = useState<'recommended' | 'price' | 'rating'>('recommended');
   
   const t = {
@@ -20,12 +33,8 @@ export function HotelResultsSection({ language = 'zh' }: HotelResultsSectionProp
       rating: '评分',
       bookNow: '去预订',
       perNight: '每晚',
-      platforms: {
-        booking: 'Booking.com',
-        ctrip: '携程',
-        agoda: 'Agoda',
-        expedia: 'Expedia'
-      }
+      brand: '品牌',
+      allBrands: '全部品牌'
     },
     en: {
       title: 'Hotel Comparison Results',
@@ -35,35 +44,47 @@ export function HotelResultsSection({ language = 'zh' }: HotelResultsSectionProp
       rating: 'Rating',
       bookNow: 'Book Now',
       perNight: 'per night',
-      platforms: {
-        booking: 'Booking.com',
-        ctrip: 'Ctrip',
-        agoda: 'Agoda',
-        expedia: 'Expedia'
-      }
+      brand: 'Brand',
+      allBrands: 'All Brands'
     }
   }[language];
 
-  // 纯跳转链接（无联盟追踪）
   const hotelPlatforms = [
-    { name: t.platforms.booking, url: 'https://www.booking.com', color: 'bg-blue-600' },
-    { name: t.platforms.ctrip, url: 'https://www.ctrip.com', color: 'bg-blue-500' },
-    { name: t.platforms.agoda, url: 'https://www.agoda.com', color: 'bg-purple-500' },
-    { name: t.platforms.expedia, url: 'https://www.expedia.com', color: 'bg-yellow-500' }
+    { name: 'Booking.com', url: 'https://www.booking.com', color: 'bg-blue-600' },
+    { name: '携程', url: 'https://www.ctrip.com', color: 'bg-blue-500' },
+    { name: 'Agoda', url: 'https://www.agoda.com', color: 'bg-purple-500' },
+    { name: 'Expedia', url: 'https://www.expedia.com', color: 'bg-yellow-500' }
   ];
 
-  const hotels = [
-    { name: '上海外滩茂悦大酒店', location: '上海外滩', rating: 4.8, reviews: 2341, price: 1280, stars: 5 },
-    { name: '北京国贸大酒店', location: '北京CBD', rating: 4.9, reviews: 1856, price: 1580, stars: 5 },
-    { name: '广州花园酒店', location: '广州天河', rating: 4.6, reviews: 3210, price: 680, stars: 4 },
+  // 根据酒店品牌筛选酒店数据
+  const destination = searchParams.to.split('(')[0].trim() || '上海';
+  const selectedBrand = searchParams.hotelBrand;
+
+  const allHotels = [
+    { name: `${destination}万豪酒店`, brand: '万豪', location: `${destination}市中心`, rating: 4.8, reviews: 2341, price: 1280, stars: 5 },
+    { name: `${destination}希尔顿酒店`, brand: '希尔顿', location: `${destination}商务区`, rating: 4.9, reviews: 1856, price: 1580, stars: 5 },
+    { name: `${destination}洲际酒店`, brand: '洲际', location: `${destination}外滩`, rating: 4.7, reviews: 3210, price: 980, stars: 5 },
+    { name: `${destination}香格里拉大酒店`, brand: '香格里拉', location: `${destination}金融区`, rating: 4.8, reviews: 2100, price: 1180, stars: 5 },
+    { name: `${destination}凯悦酒店`, brand: '凯悦', location: `${destination}购物中心`, rating: 4.6, reviews: 1890, price: 880, stars: 4 },
+    { name: `${destination}全季酒店`, brand: '全季', location: `${destination}火车站`, rating: 4.5, reviews: 4500, price: 380, stars: 3 },
+    { name: `${destination}亚朵酒店`, brand: '亚朵', location: `${destination}机场附近`, rating: 4.7, reviews: 3200, price: 450, stars: 4 },
+    { name: `${destination}如家快捷酒店`, brand: '如家', location: `${destination}老城区`, rating: 4.2, reviews: 5600, price: 280, stars: 2 },
   ];
+
+  // 根据选择的品牌筛选
+  const hotels = selectedBrand 
+    ? allHotels.filter(h => h.brand === selectedBrand)
+    : allHotels;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">{t.title}</h2>
-          <p className="text-slate-500">{t.subtitle}</p>
+          <p className="text-slate-500">
+            {destination} 
+            {selectedBrand && ` | ${t.brand}: ${selectedBrand}`}
+          </p>
         </div>
         <div className="flex gap-2">
           {(['recommended', 'price', 'rating'] as const).map((sort) => (
@@ -104,6 +125,7 @@ export function HotelResultsSection({ language = 'zh' }: HotelResultsSectionProp
                   <span className="font-bold text-sky-600">{hotel.rating}</span>
                   <span className="text-sm text-slate-400">({hotel.reviews})</span>
                 </div>
+                <Badge variant="outline" className="text-xs">{hotel.brand}</Badge>
               </div>
               <div className="flex items-center justify-between mb-3">
                 <div>
