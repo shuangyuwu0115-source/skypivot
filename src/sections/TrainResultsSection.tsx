@@ -4,11 +4,24 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-interface TrainResultsSectionProps {
-  language?: 'zh' | 'en';
+interface SearchParams {
+  from: string;
+  to: string;
+  hotelBrand: string;
+  departureDate: string;
+  returnDate: string;
+  passengers: number;
+  tripType: 'roundTrip' | 'oneWay';
+  cabinClass: 'economy' | 'business' | 'first';
+  isDomestic: boolean;
 }
 
-export function TrainResultsSection({ language = 'zh' }: TrainResultsSectionProps) {
+interface TrainResultsSectionProps {
+  language?: 'zh' | 'en';
+  searchParams: SearchParams;
+}
+
+export function TrainResultsSection({ language = 'zh', searchParams }: TrainResultsSectionProps) {
   const [sortBy, setSortBy] = useState<'recommended' | 'price' | 'time'>('recommended');
   
   const t = {
@@ -20,6 +33,8 @@ export function TrainResultsSection({ language = 'zh' }: TrainResultsSectionProp
       time: '时间',
       bookNow: '去预订',
       second: '二等座',
+      first: '一等座',
+      business: '商务座',
       platforms: {
         cr: '12306',
         ctrip: '携程',
@@ -35,6 +50,8 @@ export function TrainResultsSection({ language = 'zh' }: TrainResultsSectionProp
       time: 'Time',
       bookNow: 'Book Now',
       second: 'Second Class',
+      first: 'First Class',
+      business: 'Business Class',
       platforms: {
         cr: '12306',
         ctrip: 'Ctrip',
@@ -52,18 +69,51 @@ export function TrainResultsSection({ language = 'zh' }: TrainResultsSectionProp
     { name: t.platforms.trip, url: 'https://www.trip.com', color: 'bg-sky-500' }
   ];
 
-  const trains = [
-    { trainNo: 'G1', type: '复兴号', from: '北京南', to: '上海虹桥', dep: '09:00', arr: '13:28', duration: '4h28m', price: 626, seat: '二等座' },
-    { trainNo: 'G3', type: '复兴号', from: '北京南', to: '上海虹桥', dep: '14:00', arr: '18:28', duration: '4h28m', price: 598, seat: '二等座' },
-    { trainNo: 'G101', type: '和谐号', from: '北京南', to: '上海虹桥', dep: '07:00', arr: '12:15', duration: '5h15m', price: 553, seat: '二等座' },
-  ];
+  // 从搜索参数中提取城市名称
+  const fromCity = searchParams.from.split('(')[0].trim() || '北京';
+  const toCity = searchParams.to.split('(')[0].trim() || '上海';
+
+  // 根据搜索参数动态生成火车数据
+  const generateTrains = () => {
+    const basePrice = 200 + Math.random() * 400;
+    const trainTypes = ['G', 'D', 'C', 'Z', 'T'];
+    const trainNames = ['复兴号', '和谐号', '城际高铁', '直达特快', '特快列车'];
+    
+    return [0, 1, 2, 3].map((index) => {
+      const price = Math.round(basePrice + (index * 50) - 100);
+      const depHour = 7 + index * 3;
+      const duration = 4 + Math.floor(Math.random() * 3);
+      const arrHour = depHour + duration;
+      const trainType = trainTypes[index % trainTypes.length];
+      const trainName = trainNames[index % trainNames.length];
+      
+      return {
+        trainNo: `${trainType}${100 + index * 50}`,
+        type: trainName,
+        from: fromCity,
+        to: toCity,
+        dep: `${String(depHour).padStart(2, '0')}:00`,
+        arr: `${String(arrHour).padStart(2, '0')}:30`,
+        duration: `${duration}h30m`,
+        price: Math.max(150, price),
+        seat: index === 0 ? '商务座' : index === 1 ? '一等座' : '二等座'
+      };
+    });
+  };
+
+  const trains = generateTrains();
+
+  const sortedTrains = [...trains].sort((a, b) => {
+    if (sortBy === 'price') return a.price - b.price;
+    return 0;
+  });
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">{t.title}</h2>
-          <p className="text-slate-500">{t.subtitle}</p>
+          <p className="text-slate-500">{fromCity} → {toCity} | {searchParams.departureDate || '2024-12-01'}</p>
         </div>
         <div className="flex gap-2">
           {(['recommended', 'price', 'time'] as const).map((sort) => (
@@ -83,7 +133,7 @@ export function TrainResultsSection({ language = 'zh' }: TrainResultsSectionProp
       </div>
 
       <div className="space-y-4">
-        {trains.map((train, index) => (
+        {sortedTrains.map((train, index) => (
           <Card key={index} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
