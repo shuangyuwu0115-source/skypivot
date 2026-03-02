@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Car, Users, Briefcase, Fuel, Check } from 'lucide-react';
+import { Car, Users, Briefcase, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,11 +18,14 @@ export function CarResultsSection({ language = 'zh' }: CarResultsSectionProps) {
       recommended: '推荐',
       price: '价格',
       rating: '评分',
-      bookNow: '立即预订',
+      bookNow: '去预订',
       perDay: '每天',
-      unlimited: '无限里程',
-      insurance: '含保险',
-      auto: '自动挡'
+      platforms: {
+        hertz: 'Hertz',
+        enterprise: 'Enterprise',
+        rentalcars: 'Rentalcars',
+        sixt: 'SIXT'
+      }
     },
     en: {
       title: 'Car Rental Comparison Results',
@@ -32,16 +35,27 @@ export function CarResultsSection({ language = 'zh' }: CarResultsSectionProps) {
       rating: 'Rating',
       bookNow: 'Book Now',
       perDay: 'per day',
-      unlimited: 'Unlimited Miles',
-      insurance: 'Insurance Included',
-      auto: 'Automatic'
+      platforms: {
+        hertz: 'Hertz',
+        enterprise: 'Enterprise',
+        rentalcars: 'Rentalcars',
+        sixt: 'SIXT'
+      }
     }
   }[language];
 
+  // 纯跳转链接（无联盟追踪）
+  const carPlatforms = [
+    { name: t.platforms.hertz, url: 'https://www.hertz.com', color: 'bg-yellow-500' },
+    { name: t.platforms.enterprise, url: 'https://www.enterprise.com', color: 'bg-green-600' },
+    { name: t.platforms.rentalcars, url: 'https://www.rentalcars.com', color: 'bg-orange-500' },
+    { name: t.platforms.sixt, url: 'https://www.sixt.com', color: 'bg-red-600' }
+  ];
+
   const cars = [
-    { model: '丰田卡罗拉', type: '经济型', seats: 5, luggage: 2, price: 280, rating: 4.6, image: '🚗' },
-    { model: '本田CR-V', type: 'SUV', seats: 5, luggage: 4, price: 450, rating: 4.8, image: '🚙' },
-    { model: '奔驰E级', type: '豪华型', seats: 5, luggage: 3, price: 880, rating: 4.9, image: '🚘' },
+    { model: '丰田卡罗拉', type: '经济型', seats: 5, luggage: 2, price: 280, rating: 4.6 },
+    { model: '本田CR-V', type: 'SUV', seats: 5, luggage: 4, price: 450, rating: 4.8 },
+    { model: '奔驰E级', type: '豪华型', seats: 5, luggage: 3, price: 880, rating: 4.9 },
   ];
 
   return (
@@ -73,21 +87,33 @@ export function CarResultsSection({ language = 'zh' }: CarResultsSectionProps) {
           <Card key={index} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-                <div className="text-6xl">{car.image}</div>
+                <div className="text-6xl">🚗</div>
                 <div className="flex-1">
                   <h3 className="font-bold text-xl text-slate-800">{car.model}</h3>
                   <p className="text-slate-500 mb-3">{car.type}</p>
                   <div className="flex gap-4 text-sm text-slate-600">
                     <span className="flex items-center gap-1"><Users className="w-4 h-4" />{car.seats}座</span>
                     <span className="flex items-center gap-1"><Briefcase className="w-4 h-4" />{car.luggage}行李</span>
-                    <Badge variant="outline" className="text-xs">{t.auto}</Badge>
-                    <Badge variant="outline" className="text-xs">{t.unlimited}</Badge>
+                    <Badge variant="outline" className="text-xs">自动挡</Badge>
+                    <Badge variant="outline" className="text-xs">无限里程</Badge>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-3xl font-bold text-sky-600">¥{car.price}</div>
                   <div className="text-sm text-slate-400 mb-3">/{t.perDay}</div>
-                  <Button className="bg-sky-500 hover:bg-sky-600">{t.bookNow}</Button>
+                  <div className="flex gap-2 flex-wrap">
+                    {carPlatforms.map((platform, idx) => (
+                      <Button 
+                        key={idx}
+                        size="sm"
+                        className={`${platform.color} text-white hover:opacity-90`}
+                        onClick={() => window.open(platform.url, '_blank')}
+                      >
+                        <ExternalLink className="w-3 h-3 mr-1" />
+                        {platform.name}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </CardContent>
