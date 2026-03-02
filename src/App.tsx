@@ -14,15 +14,17 @@ import './App.css';
 
 type ServiceType = 'flights' | 'hotels' | 'cars' | 'trains';
 
-// 搜索参数类型
+// 搜索参数类型（已更新）
 interface SearchParams {
   from: string;
   to: string;
+  hotelBrand: string;
   departureDate: string;
   returnDate: string;
   passengers: number;
   tripType: 'roundTrip' | 'oneWay';
   cabinClass: 'economy' | 'business' | 'first';
+  isDomestic: boolean;
 }
 
 function App() {
@@ -30,17 +32,20 @@ function App() {
   const [hasSearched, setHasSearched] = useState(false);
   const [language, setLanguage] = useState<'zh' | 'en'>('zh');
   
-  // 添加搜索参数状态
+  // 搜索参数状态（已更新）
   const [searchParams, setSearchParams] = useState<SearchParams>({
     from: '',
     to: '',
+    hotelBrand: '',
     departureDate: '',
     returnDate: '',
     passengers: 1,
     tripType: 'roundTrip',
-    cabinClass: 'economy'
+    cabinClass: 'economy',
+    isDomestic: true
   });
 
+  // 处理搜索（接收完整参数）
   const handleSearch = (params: SearchParams) => {
     setSearchParams(params);
     setHasSearched(true);
