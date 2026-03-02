@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import { Plane, Clock, Luggage, ArrowRight, Star, ExternalLink } from 'lucide-react';
+import { Plane, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { flightPlatforms } from '@/data/platforms';
-import { randomPrice } from '@/lib/utils';
 
 interface ResultsSectionProps {
   language?: 'zh' | 'en';
@@ -20,12 +18,16 @@ export function ResultsSection({ language = 'zh' }: ResultsSectionProps) {
       recommended: '推荐',
       cheapest: '最便宜',
       fastest: '最快',
-      bookNow: '立即预订',
-      viewDeal: '查看优惠',
+      bookNow: '去预订',
       direct: '直飞',
       stops: '经停',
       from: '起',
-      baggage: '行李'
+      platforms: {
+        ctrip: '携程',
+        qunar: '去哪儿',
+        expedia: 'Expedia',
+        skyscanner: 'Skyscanner'
+      }
     },
     en: {
       title: 'Flight Comparison Results',
@@ -34,24 +36,31 @@ export function ResultsSection({ language = 'zh' }: ResultsSectionProps) {
       cheapest: 'Cheapest',
       fastest: 'Fastest',
       bookNow: 'Book Now',
-      viewDeal: 'View Deal',
       direct: 'Direct',
       stops: 'stops',
       from: 'from',
-      baggage: 'Baggage'
+      platforms: {
+        ctrip: 'Ctrip',
+        qunar: 'Qunar',
+        expedia: 'Expedia',
+        skyscanner: 'Skyscanner'
+      }
     }
   }[language];
+
+  // 纯跳转链接（无联盟追踪）
+  const flightPlatforms = [
+    { name: t.platforms.ctrip, url: 'https://www.ctrip.com', color: 'bg-blue-500' },
+    { name: t.platforms.qunar, url: 'https://www.qunar.com', color: 'bg-green-500' },
+    { name: t.platforms.expedia, url: 'https://www.expedia.com', color: 'bg-yellow-500' },
+    { name: t.platforms.skyscanner, url: 'https://www.skyscanner.com', color: 'bg-sky-500' }
+  ];
 
   const flights = [
     { airline: '中国国航', flightNo: 'CA1234', from: '北京', to: '上海', dep: '08:00', arr: '10:30', duration: '2h30m', price: 880, stops: 0 },
     { airline: '东方航空', flightNo: 'MU5678', from: '北京', to: '上海', dep: '10:00', arr: '12:30', duration: '2h30m', price: 760, stops: 0 },
     { airline: '南方航空', flightNo: 'CZ9012', from: '北京', to: '上海', dep: '14:00', arr: '16:45', duration: '2h45m', price: 690, stops: 1 },
   ];
-
-  const sortedFlights = [...flights].sort((a, b) => {
-    if (sortBy === 'cheapest') return a.price - b.price;
-    return 0;
-  });
 
   return (
     <div className="space-y-6">
@@ -78,7 +87,7 @@ export function ResultsSection({ language = 'zh' }: ResultsSectionProps) {
       </div>
 
       <div className="space-y-4">
-        {sortedFlights.map((flight, index) => (
+        {flights.map((flight, index) => (
           <Card key={index} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -112,14 +121,24 @@ export function ResultsSection({ language = 'zh' }: ResultsSectionProps) {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col items-end gap-2">
                   <div className="text-right">
                     <div className="text-2xl font-bold text-sky-600">¥{flight.price}</div>
                     <div className="text-xs text-slate-400">{t.from}</div>
                   </div>
-                  <Button className="bg-sky-500 hover:bg-sky-600">
-                    {t.bookNow}
-                  </Button>
+                  <div className="flex gap-2 flex-wrap">
+                    {flightPlatforms.map((platform, idx) => (
+                      <Button 
+                        key={idx}
+                        size="sm"
+                        className={`${platform.color} text-white hover:opacity-90`}
+                        onClick={() => window.open(platform.url, '_blank')}
+                      >
+                        <ExternalLink className="w-3 h-3 mr-1" />
+                        {platform.name}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </CardContent>
