@@ -4,11 +4,22 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-interface ResultsSectionProps {
-  language?: 'zh' | 'en';
+interface SearchParams {
+  from: string;
+  to: string;
+  departureDate: string;
+  returnDate: string;
+  passengers: number;
+  tripType: 'roundTrip' | 'oneWay';
+  cabinClass: 'economy' | 'business' | 'first';
 }
 
-export function ResultsSection({ language = 'zh' }: ResultsSectionProps) {
+interface ResultsSectionProps {
+  language?: 'zh' | 'en';
+  searchParams: SearchParams;
+}
+
+export function ResultsSection({ language = 'zh', searchParams }: ResultsSectionProps) {
   const [sortBy, setSortBy] = useState<'recommended' | 'cheapest' | 'fastest'>('recommended');
   
   const t = {
@@ -22,6 +33,7 @@ export function ResultsSection({ language = 'zh' }: ResultsSectionProps) {
       direct: '直飞',
       stops: '经停',
       from: '起',
+      route: '航线',
       platforms: {
         ctrip: '携程',
         qunar: '去哪儿',
@@ -39,6 +51,7 @@ export function ResultsSection({ language = 'zh' }: ResultsSectionProps) {
       direct: 'Direct',
       stops: 'stops',
       from: 'from',
+      route: 'Route',
       platforms: {
         ctrip: 'Ctrip',
         qunar: 'Qunar',
@@ -56,18 +69,48 @@ export function ResultsSection({ language = 'zh' }: ResultsSectionProps) {
     { name: t.platforms.skyscanner, url: 'https://www.skyscanner.com', color: 'bg-sky-500' }
   ];
 
-  const flights = [
-    { airline: '中国国航', flightNo: 'CA1234', from: '北京', to: '上海', dep: '08:00', arr: '10:30', duration: '2h30m', price: 880, stops: 0 },
-    { airline: '东方航空', flightNo: 'MU5678', from: '北京', to: '上海', dep: '10:00', arr: '12:30', duration: '2h30m', price: 760, stops: 0 },
-    { airline: '南方航空', flightNo: 'CZ9012', from: '北京', to: '上海', dep: '14:00', arr: '16:45', duration: '2h45m', price: 690, stops: 1 },
-  ];
+  // 从搜索参数中提取城市名称（去掉括号内容）
+  const fromCity = searchParams.from.split('(')[0].trim() || '北京';
+  const toCity = searchParams.to.split('(')[0].trim() || '上海';
+
+  // 根据搜索参数动态生成航班数据
+  const generateFlights = () => {
+    const basePrice = 500 + Math.random() * 1000;
+    const airlines = ['中国国航', '东方航空', '南方航空', '海南航空', '厦门航空'];
+    
+    return airlines.map((airline, index) => {
+      const price = Math.round(basePrice + (index * 100) - 200);
+      const depHour = 8 + index * 2;
+      const duration = 2 + Math.floor(Math.random() * 2);
+      const arrHour = depHour + duration;
+      
+      return {
+        airline,
+        flightNo: `${['CA', 'MU', 'CZ', 'HU', 'MF'][index]}${1000 + index * 1234}`,
+        from: fromCity,
+        to: toCity,
+        dep: `${String(depHour).padStart(2, '0')}:00`,
+        arr: `${String(arrHour).padStart(2, '0')}:30`,
+        duration: `${duration}h30m`,
+        price: Math.max(400, price),
+        stops: index === 2 ? 1 : 0
+      };
+    });
+  };
+
+  const flights = generateFlights();
+
+  const sortedFlights = [...flights].sort((a, b) => {
+    if (sortBy === 'cheapest') return a.price - b.price;
+    return 0;
+  });
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">{t.title}</h2>
-          <p className="text-slate-500">{t.subtitle}</p>
+          <p className="text-slate-500">{fromCity} → {toCity} | {searchParams.departureDate || '2024-12-01'}</p>
         </div>
         <div className="flex gap-2">
           {(['recommended', 'cheapest', 'fastest'] as const).map((sort) => (
@@ -87,7 +130,7 @@ export function ResultsSection({ language = 'zh' }: ResultsSectionProps) {
       </div>
 
       <div className="space-y-4">
-        {flights.map((flight, index) => (
+        {sortedFlights.map((flight, index) => (
           <Card key={index} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
