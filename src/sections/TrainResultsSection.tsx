@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Train, Clock, Armchair, Wifi, Coffee } from 'lucide-react';
+import { Train, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,11 +18,14 @@ export function TrainResultsSection({ language = 'zh' }: TrainResultsSectionProp
       recommended: '推荐',
       price: '价格',
       time: '时间',
-      bookNow: '立即预订',
-      business: '商务座',
-      first: '一等座',
+      bookNow: '去预订',
       second: '二等座',
-      wifi: '免费WiFi'
+      platforms: {
+        cr: '12306',
+        ctrip: '携程',
+        qunar: '去哪儿',
+        trip: 'Trip.com'
+      }
     },
     en: {
       title: 'Train Ticket Comparison Results',
@@ -31,12 +34,23 @@ export function TrainResultsSection({ language = 'zh' }: TrainResultsSectionProp
       price: 'Price',
       time: 'Time',
       bookNow: 'Book Now',
-      business: 'Business',
-      first: 'First Class',
       second: 'Second Class',
-      wifi: 'Free WiFi'
+      platforms: {
+        cr: '12306',
+        ctrip: 'Ctrip',
+        qunar: 'Qunar',
+        trip: 'Trip.com'
+      }
     }
   }[language];
+
+  // 纯跳转链接（无联盟追踪）
+  const trainPlatforms = [
+    { name: t.platforms.cr, url: 'https://www.12306.cn', color: 'bg-red-600' },
+    { name: t.platforms.ctrip, url: 'https://www.ctrip.com', color: 'bg-blue-500' },
+    { name: t.platforms.qunar, url: 'https://www.qunar.com', color: 'bg-green-500' },
+    { name: t.platforms.trip, url: 'https://www.trip.com', color: 'bg-sky-500' }
+  ];
 
   const trains = [
     { trainNo: 'G1', type: '复兴号', from: '北京南', to: '上海虹桥', dep: '09:00', arr: '13:28', duration: '4h28m', price: 626, seat: '二等座' },
@@ -101,12 +115,24 @@ export function TrainResultsSection({ language = 'zh' }: TrainResultsSectionProp
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col items-end gap-2">
                   <div className="text-right">
                     <div className="text-2xl font-bold text-sky-600">¥{train.price}</div>
                     <div className="text-xs text-slate-400">{t.second}</div>
                   </div>
-                  <Button className="bg-sky-500 hover:bg-sky-600">{t.bookNow}</Button>
+                  <div className="flex gap-2 flex-wrap">
+                    {trainPlatforms.map((platform, idx) => (
+                      <Button 
+                        key={idx}
+                        size="sm"
+                        className={`${platform.color} text-white hover:opacity-90`}
+                        onClick={() => window.open(platform.url, '_blank')}
+                      >
+                        <ExternalLink className="w-3 h-3 mr-1" />
+                        {platform.name}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </CardContent>
