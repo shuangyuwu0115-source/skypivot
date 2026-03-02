@@ -15,7 +15,6 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [departureDate, setDepartureDate] = useState('');
-  const [returnDate, setReturnDate] = useState('');
   const [passengers, setPassengers] = useState(1);
   const [showFromDropdown, setShowFromDropdown] = useState(false);
   const [showToDropdown, setShowToDropdown] = useState(false);
@@ -27,20 +26,14 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
       from: '出发地',
       to: '目的地',
       departure: '出发日期',
-      return: '返回日期',
       checkIn: '入住日期',
-      checkOut: '退房日期',
       pickup: '取车日期',
-      dropoff: '还车日期',
       passengers: '乘客',
       rooms: '房间',
-      travelers: '旅客',
       search: '搜索',
       roundTrip: '往返',
       oneWay: '单程',
       economy: '经济舱',
-      business: '商务舱',
-      firstClass: '头等舱',
       pickupLocation: '取车地点',
       dropoffLocation: '还车地点',
       driverAge: '驾驶员年龄',
@@ -48,27 +41,20 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
       whereFrom: '您从哪里出发？',
       enterDestination: '输入目的地',
       enterCity: '输入城市',
-      selectDate: '选择日期',
       adult: '成人'
     },
     en: {
       from: 'From',
       to: 'To',
       departure: 'Departure',
-      return: 'Return',
       checkIn: 'Check-in',
-      checkOut: 'Check-out',
       pickup: 'Pick-up',
-      dropoff: 'Drop-off',
       passengers: 'Passengers',
       rooms: 'Rooms',
-      travelers: 'Travelers',
       search: 'Search',
       roundTrip: 'Round Trip',
       oneWay: 'One Way',
       economy: 'Economy',
-      business: 'Business',
-      firstClass: 'First Class',
       pickupLocation: 'Pick-up Location',
       dropoffLocation: 'Drop-off Location',
       driverAge: 'Driver Age',
@@ -76,7 +62,6 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
       whereFrom: 'Where from?',
       enterDestination: 'Enter destination',
       enterCity: 'Enter city',
-      selectDate: 'Select date',
       adult: 'Adult'
     }
   }[language];
@@ -141,8 +126,6 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
             </button>
             <select className="px-4 py-2 rounded-full bg-slate-100 text-slate-600 text-sm font-medium border-none outline-none">
               <option>{t.economy}</option>
-              <option>{t.business}</option>
-              <option>{t.firstClass}</option>
             </select>
           </div>
         )}
@@ -244,8 +227,6 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
               {serviceType === 'cars' ? (
                 <select className="w-full pl-10 h-12 bg-slate-50 border border-slate-200 rounded-md focus:border-sky-500 focus:ring-sky-500">
                   <option>25-70 {t.adult}</option>
-                  <option>21-24</option>
-                  <option>18-20</option>
                 </select>
               ) : (
                 <select 
