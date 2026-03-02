@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Building2, MapPin, Star, Wifi, Coffee, Car, Check } from 'lucide-react';
+import { Building2, MapPin, Star, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,11 +18,14 @@ export function HotelResultsSection({ language = 'zh' }: HotelResultsSectionProp
       recommended: '推荐',
       price: '价格',
       rating: '评分',
-      bookNow: '立即预订',
+      bookNow: '去预订',
       perNight: '每晚',
-      freeCancellation: '免费取消',
-      breakfast: '含早餐',
-      wifi: '免费WiFi'
+      platforms: {
+        booking: 'Booking.com',
+        ctrip: '携程',
+        agoda: 'Agoda',
+        expedia: 'Expedia'
+      }
     },
     en: {
       title: 'Hotel Comparison Results',
@@ -32,16 +35,27 @@ export function HotelResultsSection({ language = 'zh' }: HotelResultsSectionProp
       rating: 'Rating',
       bookNow: 'Book Now',
       perNight: 'per night',
-      freeCancellation: 'Free Cancellation',
-      breakfast: 'Breakfast Included',
-      wifi: 'Free WiFi'
+      platforms: {
+        booking: 'Booking.com',
+        ctrip: 'Ctrip',
+        agoda: 'Agoda',
+        expedia: 'Expedia'
+      }
     }
   }[language];
 
+  // 纯跳转链接（无联盟追踪）
+  const hotelPlatforms = [
+    { name: t.platforms.booking, url: 'https://www.booking.com', color: 'bg-blue-600' },
+    { name: t.platforms.ctrip, url: 'https://www.ctrip.com', color: 'bg-blue-500' },
+    { name: t.platforms.agoda, url: 'https://www.agoda.com', color: 'bg-purple-500' },
+    { name: t.platforms.expedia, url: 'https://www.expedia.com', color: 'bg-yellow-500' }
+  ];
+
   const hotels = [
-    { name: '上海外滩茂悦大酒店', location: '上海外滩', rating: 4.8, reviews: 2341, price: 1280, stars: 5, image: '🏨' },
-    { name: '北京国贸大酒店', location: '北京CBD', rating: 4.9, reviews: 1856, price: 1580, stars: 5, image: '🏨' },
-    { name: '广州花园酒店', location: '广州天河', rating: 4.6, reviews: 3210, price: 680, stars: 4, image: '🏨' },
+    { name: '上海外滩茂悦大酒店', location: '上海外滩', rating: 4.8, reviews: 2341, price: 1280, stars: 5 },
+    { name: '北京国贸大酒店', location: '北京CBD', rating: 4.9, reviews: 1856, price: 1580, stars: 5 },
+    { name: '广州花园酒店', location: '广州天河', rating: 4.6, reviews: 3210, price: 680, stars: 4 },
   ];
 
   return (
@@ -72,7 +86,7 @@ export function HotelResultsSection({ language = 'zh' }: HotelResultsSectionProp
         {hotels.map((hotel, index) => (
           <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
             <div className="h-48 bg-gradient-to-br from-sky-100 to-blue-200 flex items-center justify-center text-6xl">
-              {hotel.image}
+              🏨
             </div>
             <CardContent className="p-4">
               <div className="flex items-center gap-1 mb-2">
@@ -90,17 +104,26 @@ export function HotelResultsSection({ language = 'zh' }: HotelResultsSectionProp
                   <span className="font-bold text-sky-600">{hotel.rating}</span>
                   <span className="text-sm text-slate-400">({hotel.reviews})</span>
                 </div>
-                <div className="flex gap-2">
-                  <Badge variant="outline" className="text-xs"><Wifi className="w-3 h-3 mr-1" />{t.wifi}</Badge>
-                  <Badge variant="outline" className="text-xs"><Coffee className="w-3 h-3 mr-1" />{t.breakfast}</Badge>
-                </div>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-3">
                 <div>
                   <span className="text-2xl font-bold text-sky-600">¥{hotel.price}</span>
                   <span className="text-sm text-slate-400">/{t.perNight}</span>
                 </div>
-                <Button className="bg-sky-500 hover:bg-sky-600">{t.bookNow}</Button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {hotelPlatforms.map((platform, idx) => (
+                  <Button 
+                    key={idx}
+                    size="sm"
+                    variant="outline"
+                    className={`${platform.color} text-white hover:opacity-90 border-0`}
+                    onClick={() => window.open(platform.url, '_blank')}
+                  >
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    {platform.name}
+                  </Button>
+                ))}
               </div>
             </CardContent>
           </Card>
