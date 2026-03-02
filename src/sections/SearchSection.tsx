@@ -5,9 +5,19 @@ import { Input } from '@/components/ui/input';
 import { airports, searchAirports } from '@/data/airports';
 import { trainStations, searchStations } from '@/data/trainStations';
 
+interface SearchParams {
+  from: string;
+  to: string;
+  departureDate: string;
+  returnDate: string;
+  passengers: number;
+  tripType: 'roundTrip' | 'oneWay';
+  cabinClass: 'economy' | 'business' | 'first';
+}
+
 interface SearchSectionProps {
   serviceType: 'flights' | 'hotels' | 'cars' | 'trains';
-  onSearch: () => void;
+  onSearch: (params: SearchParams) => void;
   language?: 'zh' | 'en';
 }
 
@@ -83,7 +93,6 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
     }
   }[language];
 
-  // 修复：根据输入实时搜索出发地
   const handleFromSearch = (query: string) => {
     setFrom(query);
     if (query.trim() === '') {
@@ -101,7 +110,6 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
     setShowFromDropdown(results.length > 0);
   };
 
-  // 修复：根据输入实时搜索目的地
   const handleToSearch = (query: string) => {
     setTo(query);
     if (query.trim() === '') {
@@ -135,9 +143,6 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
     const temp = from;
     setFrom(to);
     setTo(temp);
-    const tempResults = fromResults;
-    setFromResults(toResults);
-    setToResults(tempResults);
   };
 
   const getServiceIcon = () => {
@@ -151,12 +156,24 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
 
   const today = new Date().toISOString().split('T')[0];
 
-  // 点击外部关闭下拉框
   const handleBlur = (type: 'from' | 'to') => {
     setTimeout(() => {
       if (type === 'from') setShowFromDropdown(false);
       else setShowToDropdown(false);
     }, 200);
+  };
+
+  // 修改：点击搜索时传递参数
+  const handleSearchClick = () => {
+    onSearch({
+      from,
+      to,
+      departureDate,
+      returnDate,
+      passengers,
+      tripType,
+      cabinClass
+    });
   };
 
   return (
@@ -337,7 +354,7 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
         {/* 搜索按钮 */}
         <div className="mt-4 flex justify-center">
           <Button 
-            onClick={onSearch}
+            onClick={handleSearchClick}
             className="w-full md:w-auto px-12 py-6 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center gap-3"
           >
             {getServiceIcon()}
