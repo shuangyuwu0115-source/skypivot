@@ -13,12 +13,14 @@ export function Footer({ language = 'zh' }: FooterProps) {
       tagline: '让每一次旅行都物超所值',
       about: '关于我们',
       privacy: '隐私政策',
+      contact: 'support@skypivot.co',
       rights: '版权所有'
     },
     en: {
       tagline: 'Make every trip worth it',
       about: 'About Us',
       privacy: 'Privacy Policy',
+      contact: 'support@skypivot.co',
       rights: 'All rights reserved'
     }
   }[language];
