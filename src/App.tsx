@@ -14,7 +14,6 @@ import './App.css';
 
 type ServiceType = 'flights' | 'hotels' | 'cars' | 'trains';
 
-// 搜索参数类型（已更新）
 interface SearchParams {
   from: string;
   to: string;
@@ -32,7 +31,6 @@ function App() {
   const [hasSearched, setHasSearched] = useState(false);
   const [language, setLanguage] = useState<'zh' | 'en'>('zh');
   
-  // 搜索参数状态（已更新）
   const [searchParams, setSearchParams] = useState<SearchParams>({
     from: '',
     to: '',
@@ -45,7 +43,6 @@ function App() {
     isDomestic: true
   });
 
-  // 处理搜索（接收完整参数）
   const handleSearch = (params: SearchParams) => {
     setSearchParams(params);
     setHasSearched(true);
@@ -58,6 +55,15 @@ function App() {
   const toggleLanguage = () => {
     setLanguage(prev => prev === 'zh' ? 'en' : 'zh');
   };
+
+  const t = {
+    zh: {
+      disclaimer: '免责声明：SkyPivot 是旅行比价平台，通过我们的链接预订可能会获得佣金，但这不会影响您支付的价格。我们致力于为您提供最优惠的价格比较服务。'
+    },
+    en: {
+      disclaimer: 'Disclaimer: SkyPivot is a travel comparison platform. We may earn a commission when you book through our links, but this does not affect the price you pay. We are committed to providing you with the best price comparison service.'
+    }
+  }[language];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-400 via-sky-300 to-white">
@@ -108,7 +114,7 @@ function App() {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section - 保持不变 */}
       <div className="pt-24 pb-12 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
@@ -122,14 +128,14 @@ function App() {
         </div>
       </div>
 
-      {/* Search Section - 传递 onSearch 回调 */}
+      {/* Search Section */}
       <SearchSection 
         serviceType={serviceType} 
         onSearch={handleSearch}
         language={language}
       />
 
-      {/* Results Section - 传递搜索参数 */}
+      {/* Results Section */}
       {hasSearched && (
         <div id="results-section" className="py-12 px-4">
           <div className="max-w-6xl mx-auto">
@@ -172,6 +178,14 @@ function App() {
       )}
 
       <PlatformsSection language={language} />
+
+      {/* Disclaimer Banner */}
+      <div className="bg-slate-100 py-4 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-xs text-slate-500">{t.disclaimer}</p>
+        </div>
+      </div>
+
       <Footer language={language} />
     </div>
   );
