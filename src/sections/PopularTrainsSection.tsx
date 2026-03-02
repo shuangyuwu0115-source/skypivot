@@ -1,4 +1,4 @@
-import { Train, ArrowRight, Clock } from 'lucide-react';
+import { Train, ArrowRight, Clock, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface PopularTrainsSectionProps {
@@ -10,21 +10,27 @@ export function PopularTrainsSection({ language = 'zh' }: PopularTrainsSectionPr
     zh: {
       title: '热门火车线路',
       subtitle: '体验世界经典铁路之旅',
-      duration: '时长'
+      duration: '时长',
+      book: '去预订'
     },
     en: {
       title: 'Popular Train Routes',
       subtitle: 'Experience classic railway journeys around the world',
-      duration: 'Duration'
+      duration: 'Duration',
+      book: 'Book Now'
     }
   }[language];
 
   const routes = [
-    { from: '北京', to: '上海', duration: '4h28m', type: '高铁', image: '🚄' },
-    { from: '东京', to: '大阪', duration: '2h30m', type: '新干线', image: '🚅' },
-    { from: '巴黎', to: '伦敦', duration: '2h16m', type: '欧洲之星', image: '🚂' },
-    { from: '罗马', to: '米兰', duration: '2h55m', type: '高铁', image: '🚆' },
+    { from: '北京', to: '上海', duration: '4h28m', type: '高铁', image: '🚄', url: 'https://www.12306.cn' },
+    { from: '上海', to: '杭州', duration: '1h', type: '高铁', image: '🚅', url: 'https://www.ctrip.com' },
+    { from: '广州', to: '深圳', duration: '0.5h', type: '高铁', image: '🚆', url: 'https://www.12306.cn' },
+    { from: '成都', to: '重庆', duration: '1.5h', type: '高铁', image: '🚂', url: 'https://www.qunar.com' },
   ];
+
+  const handleClick = (url: string) => {
+    window.open(url, '_blank');
+  };
 
   return (
     <section className="py-16 px-4 bg-white/50">
@@ -36,11 +42,27 @@ export function PopularTrainsSection({ language = 'zh' }: PopularTrainsSectionPr
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {routes.map((route, index) => (
-            <Card key={index} className="group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Card 
+              key={index} 
+              className="group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              onClick={() => handleClick(route.url)}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="text-4xl group-hover:scale-110 transition-transform">{route.image}</div>
+                    <div className="text-4xl group-hover:scale-110 transition-transform relative">
+                      {route.image}
+                      <button 
+                        className="absolute -bottom-1 -right-1 px-2 py-1 bg-sky-500 text-white text-xs rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClick(route.url);
+                        }}
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        {t.book}
+                      </button>
+                    </div>
                     <div>
                       <div className="flex items-center gap-2 text-slate-800 font-semibold">
                         <span>{route.from}</span>
