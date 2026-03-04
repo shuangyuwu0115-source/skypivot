@@ -14,16 +14,7 @@ export function PrivacyPolicy({ open, onOpenChange, language = 'zh' }: PrivacyPo
       lastUpdated: '最后更新：2024年12月',
       sections: [
         {
-          title: '一、联盟营销披露',
-          icon: <Shield className="w-5 h-5 text-sky-500" />,
-          content: `SkyPivot（以下简称"我们"或"本站"）是一个旅行比价平台，与 Booking.com、携程（Ctrip）、Expedia、Agoda、Hertz 等多家旅行服务商建立了联盟合作关系。
-
-当您通过本网站提供的链接访问第三方平台并完成预订时，我们可能会获得一定比例的佣金。这一佣金由服务提供商支付，不会影响您支付的最终价格——您支付的金额与各平台直接预订完全相同。
-
-我们的使命是帮助用户找到最优惠的旅行选择，佣金收入用于维持网站的正常运营和持续改进。`
-        },
-        {
-          title: '二、价格信息声明',
+          title: '一、价格信息声明',
           icon: <AlertTriangle className="w-5 h-5 text-yellow-500" />,
           content: `本网站显示的价格信息来源于各平台的公开数据，我们尽力确保信息的准确性和时效性。但由于以下原因，实际价格可能有所不同：
 
@@ -35,7 +26,7 @@ export function PrivacyPolicy({ open, onOpenChange, language = 'zh' }: PrivacyPo
 因此，显示价格仅供参考，实际预订价格请以第三方平台的结算页面为准。我们不对价格差异或信息滞后承担任何责任。`
         },
         {
-          title: '三、第三方服务声明',
+          title: '二、第三方服务声明',
           icon: <ExternalLink className="w-5 h-5 text-green-500" />,
           content: `本网站仅作为信息展示和比价平台，所有实际的预订、支付、售后服务均由第三方平台直接提供。我们并不参与实际交易过程。
 
@@ -48,7 +39,7 @@ export function PrivacyPolicy({ open, onOpenChange, language = 'zh' }: PrivacyPo
 各平台的服务条款和隐私政策适用于您的实际预订行为。`
         },
         {
-          title: '四、责任限制',
+          title: '三、责任限制',
           icon: <AlertTriangle className="w-5 h-5 text-red-500" />,
           content: `您理解并同意，使用本网站的风险由您自行承担。在适用法律允许的最大范围内，SkyPivot 不对以下情况承担责任：
 
@@ -60,7 +51,7 @@ export function PrivacyPolicy({ open, onOpenChange, language = 'zh' }: PrivacyPo
 我们建议用户在做出预订决定前，直接访问相关平台确认最新价格和条款。`
         },
         {
-          title: '五、隐私保护',
+          title: '四、隐私保护',
           icon: <Shield className="w-5 h-5 text-purple-500" />,
           content: `我们重视您的隐私保护。本网站使用 Cookies 来改善用户体验和分析网站流量。我们不会收集或存储您的个人预订信息（如信用卡号、身份证号等），所有预订操作均在第三方平台完成。
 
