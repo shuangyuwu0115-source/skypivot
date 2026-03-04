@@ -6,7 +6,7 @@ interface PopularCarsSectionProps {
   onCityClick?: (city: string) => void;
 }
 
-export default function PopularCarsSection({ language = 'zh', onCityClick }: PopularCarsSectionProps) {
+export function PopularCarsSection({ language = 'zh', onCityClick }: PopularCarsSectionProps) {
   const t = {
     zh: {
       title: '热门租车城市',
