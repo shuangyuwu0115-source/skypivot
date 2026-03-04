@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://skypivot.co/sitemap.xml
