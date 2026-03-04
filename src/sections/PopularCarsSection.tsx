@@ -1,11 +1,12 @@
-import { Car, MapPin, ExternalLink } from 'lucide-react';
+import { Car, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface PopularCarsSectionProps {
   language?: 'zh' | 'en';
+  onCityClick?: (city: string) => void;
 }
 
-export function PopularCarsSection({ language = 'zh' }: PopularCarsSectionProps) {
+export default function PopularCarsSection({ language = 'zh', onCityClick }: PopularCarsSectionProps) {
   const t = {
     zh: {
       title: '热门租车城市',
@@ -29,7 +30,7 @@ export function PopularCarsSection({ language = 'zh' }: PopularCarsSectionProps)
       country: '美国', 
       price: 280, 
       carCount: 120,
-      image: 'https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=400&h=300&fit=crop',
+      image: 'https://www.tripsavvy.com/thmb/UfG0_2WB67pErEqfIQMvEjV4W20=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-947698310-1729da81e58f40058a9e45ba82532d57-2f992696318c42cbbd595ef3ec1043fd.jpg',
       url: 'https://www.hertz.com/rentacar/reservation/home',
       domestic: false
     },
@@ -38,7 +39,7 @@ export function PopularCarsSection({ language = 'zh' }: PopularCarsSectionProps)
       country: '中国', 
       price: 180, 
       carCount: 80,
-      image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop',
+      image: 'https://media-cdn.tripadvisor.com/media/photo-s/2c/1f/f5/fe/overview-of-mandarin.jpg',
       url: 'https://www.zuche.com',
       domestic: true
     },
@@ -47,7 +48,7 @@ export function PopularCarsSection({ language = 'zh' }: PopularCarsSectionProps)
       country: '中国', 
       price: 150, 
       carCount: 95,
-      image: 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=300&fit=crop',
+      image: 'https://media.istockphoto.com/id/510901343/photo/chengdu-china-on-the-jin-river.jpg?s=612x612&w=0',
       url: 'https://www.1hai.cn',
       domestic: true
     },
@@ -56,7 +57,7 @@ export function PopularCarsSection({ language = 'zh' }: PopularCarsSectionProps)
       country: '中国', 
       price: 120, 
       carCount: 45,
-      image: 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=400&h=300&fit=crop',
+      image: 'https://www.bivou.com/wp-content/uploads/2011/12/710c8f866d137c08587bbe5378fc87f5.jpg',
       url: 'https://car.ctrip.com',
       domestic: true
     },
@@ -65,7 +66,7 @@ export function PopularCarsSection({ language = 'zh' }: PopularCarsSectionProps)
       country: '中国', 
       price: 200, 
       carCount: 35,
-      image: 'https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=400&h=300&fit=crop',
+      image: 'https://news.cgtn.com/news/35457a4e3067544f3559444d7a51544d32676a4e31457a6333566d54/img/83bb0caa02b14900bda73f5aa4c4049b/83bb0caa02b14900bda73f5aa4c4049b.png',
       url: 'https://www.zuche.com',
       domestic: true
     },
@@ -74,14 +75,18 @@ export function PopularCarsSection({ language = 'zh' }: PopularCarsSectionProps)
       country: '美国', 
       price: 220, 
       carCount: 150,
-      image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400&h=300&fit=crop',
+      image: 'https://iconparkorlando.com/bc/wp-content/uploads/wheel-gallery-night2.webp',
       url: 'https://www.enterprise.com',
       domestic: false
     },
   ];
 
-  const handleClick = (url: string) => {
-    window.open(url, '_blank');
+  const handleClick = (url: string, cityName?: string) => {
+    if (cityName && onCityClick) {
+      onCityClick(cityName);
+    } else {
+      window.open(url, '_blank');
+    }
   };
 
   return (
@@ -97,7 +102,7 @@ export function PopularCarsSection({ language = 'zh' }: PopularCarsSectionProps)
             <Card 
               key={index} 
               className="group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
-              onClick={() => handleClick(city.url)}
+              onClick={() => handleClick(city.url, city.city)}
             >
               <div className="relative h-48 overflow-hidden">
                 <img 
@@ -114,7 +119,7 @@ export function PopularCarsSection({ language = 'zh' }: PopularCarsSectionProps)
                   className="absolute top-4 right-4 px-3 py-1.5 bg-sky-500 text-white text-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 font-medium"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleClick(city.url);
+                    handleClick(city.url, city.city);
                   }}
                 >
                   <ExternalLink className="w-3 h-3" />
