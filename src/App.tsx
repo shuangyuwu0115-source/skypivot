@@ -52,9 +52,7 @@ function App() {
     }, 100);
   };
 
-  const toggleLanguage = () => {
-    setLanguage(prev => prev === 'zh' ? 'en' : 'zh');
-  };
+  const [language, setLanguage] = useState<'zh' | 'en'>('en');
 
   const t = {
     zh: {
