@@ -1,346 +1,166 @@
-// 租车平台数据
-export interface CarPlatform {
-  id: string;
-  name: string;
-  logo: string;
-  description: string;
-  website: string;
-  features: string[];
-  coverage: string[];
-  vehicleTypes: string[];
-  rating: number;
+import type { Platform } from '@/types';
+
+export interface CarPlatform extends Platform {
+  searchUrlTemplate: string;
 }
 
 export const carPlatforms: CarPlatform[] = [
   {
-    id: "hertz",
-    name: "Hertz",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Hertz_logo.svg/200px-Hertz_logo.svg.png",
-    description: "全球最大租车公司之一，遍布160+国家",
-    website: "https://www.hertz.com",
-    features: ["全球网点", "会员优惠", "24小时救援", "免费取消"],
-    coverage: ["全球"],
-    vehicleTypes: ["经济型", "SUV", "豪华车", "商务车"],
-    rating: 4.5
+    id: 'rentalcars',
+    name: 'Rentalcars.com',
+    nameEn: 'Rentalcars.com',
+    logo: 'https://www.rentalcars.com/favicon.ico',
+    baseUrl: 'https://www.rentalcars.com',
+    searchUrlTemplate: 'https://www.rentalcars.com/SearchResults.do',
+    region: 'international',
+    features: ['Global Coverage', 'Free Cancellation', 'Price Guarantee', 'Chinese Support'],
+    rating: 4.7,
+    color: '#0077CC'
   },
   {
-    id: "avis",
-    name: "Avis",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Avis_logo.svg/200px-Avis_logo.svg.png",
-    description: "商务租车首选，Preferred会员快速取车",
-    website: "https://www.avis.com",
-    features: ["Preferred会员", "快速取车", "商务优惠", "积分奖励"],
-    coverage: ["全球"],
-    vehicleTypes: ["经济型", "中型车", "SUV", "豪华车"],
-    rating: 4.4
+    id: 'expedia-car',
+    name: 'Expedia Cars',
+    nameEn: 'Expedia Cars',
+    logo: 'https://www.expedia.com/favicon.ico',
+    baseUrl: 'https://www.expedia.com/carsearch',
+    searchUrlTemplate: 'https://www.expedia.com/carsearch',
+    region: 'international',
+    features: ['Package Deals', 'Rewards Points', 'Brand Guarantee'],
+    rating: 4.5,
+    color: '#FFC94C'
   },
   {
-    id: "enterprise",
-    name: "Enterprise",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Enterprise_Rent-A-Car_logo.svg/200px-Enterprise_Rent-A-Car_logo.svg.png",
-    description: "北美最大租车公司，服务口碑极佳",
-    website: "https://www.enterprise.com",
-    features: ["免费接送", "无限里程", "新车型", "企业优惠"],
-    coverage: ["北美", "欧洲", "亚太"],
-    vehicleTypes: ["轿车", "SUV", "卡车", "商务车"],
-    rating: 4.7
+    id: 'booking-car',
+    name: 'Booking Cars',
+    nameEn: 'Booking Cars',
+    logo: 'https://www.booking.com/favicon.ico',
+    baseUrl: 'https://www.booking.com/car',
+    searchUrlTemplate: 'https://www.booking.com/car',
+    region: 'international',
+    features: ['Global Network', 'Free Cancellation', 'Genius Discounts'],
+    rating: 4.6,
+    color: '#003580'
   },
   {
-    id: "budget",
-    name: "Budget",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Budget_Rent_a_Car_logo.svg/200px-Budget_Rent_a_Car_logo.svg.png",
-    description: "经济实惠的租车选择",
-    website: "https://www.budget.com",
-    features: ["低价保证", "快速预订", "长期租赁", "企业账户"],
-    coverage: ["全球"],
-    vehicleTypes: ["经济型", "紧凑型", "中型车"],
-    rating: 4.3
+    id: 'kayak-car',
+    name: 'Kayak Cars',
+    nameEn: 'Kayak Cars',
+    logo: 'https://www.kayak.com/favicon.ico',
+    baseUrl: 'https://www.kayak.com/cars',
+    searchUrlTemplate: 'https://www.kayak.com/cars',
+    region: 'international',
+    features: ['Multi-Platform Comparison', 'Price Alerts', 'Flexible Search'],
+    rating: 4.5,
+    color: '#FF690F'
   },
   {
-    id: "europcar",
-    name: "Europcar",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Europcar_logo.svg/200px-Europcar_logo.svg.png",
-    description: "欧洲领先租车品牌，覆盖140+国家",
-    website: "https://www.europcar.com",
-    features: ["欧洲专家", "绿色车型", "灵活租期", "多语言服务"],
-    coverage: ["欧洲", "全球"],
-    vehicleTypes: ["小型车", "家庭车", "SUV", "电动车"],
-    rating: 4.4
+    id: 'enterprise',
+    name: 'Enterprise',
+    nameEn: 'Enterprise',
+    logo: 'https://www.enterprise.com/favicon.ico',
+    baseUrl: 'https://www.enterprise.com',
+    searchUrlTemplate: 'https://www.enterprise.com/car-rental',
+    region: 'international',
+    features: ['Global Chain', 'Quality Service', 'Pick-up Service'],
+    rating: 4.8,
+    color: '#006747'
   },
   {
-    id: "sixt",
-    name: "SIXT",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Sixt_logo.svg/200px-Sixt_logo.svg.png",
-    description: "德国高端租车品牌，车型新服务好",
-    website: "https://www.sixt.com",
-    features: ["新车保证", "豪华车型", "手机App", "机场服务"],
-    coverage: ["全球"],
-    vehicleTypes: ["豪华车", "跑车", "SUV", "商务车"],
-    rating: 4.6
+    id: 'hertz',
+    name: 'Hertz',
+    nameEn: 'Hertz',
+    logo: 'https://www.hertz.com/favicon.ico',
+    baseUrl: 'https://www.hertz.com',
+    searchUrlTemplate: 'https://www.hertz.com/rentacar/reservation',
+    region: 'international',
+    features: ['Century Brand', 'Member Program', 'Luxury Cars'],
+    rating: 4.6,
+    color: '#FFD700'
   },
   {
-    id: "national",
-    name: "National",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/National_Car_Rental_logo.svg/200px-National_Car_Rental_logo.svg.png",
-    description: " Emerald Club会员专属通道",
-    website: "https://www.nationalcar.com",
-    features: ["Emerald Club", "自选车型", "快速还车", "企业优惠"],
-    coverage: ["北美", "欧洲"],
-    vehicleTypes: ["轿车", "SUV", "商务车"],
-    rating: 4.5
+    id: 'avis',
+    name: 'Avis',
+    nameEn: 'Avis',
+    logo: 'https://www.avis.com/favicon.ico',
+    baseUrl: 'https://www.avis.com',
+    searchUrlTemplate: 'https://www.avis.com/car-reservation',
+    region: 'international',
+    features: ['Business Preferred', 'Global Network', 'Loyalty Program'],
+    rating: 4.5,
+    color: '#D4001A'
   },
   {
-    id: "alamo",
-    name: "Alamo",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Alamo_Rent_a_Car_logo.svg/200px-Alamo_Rent_a_Car_logo.svg.png",
-    description: "休闲旅行租车专家，价格透明",
-    website: "https://www.alamo.com",
-    features: ["价格透明", "免费额外驾驶员", "在线Check-in", "家庭优惠"],
-    coverage: ["北美", "欧洲", "南美"],
-    vehicleTypes: ["经济型", "中型车", "SUV", "敞篷车"],
-    rating: 4.4
-  },
-  {
-    id: "thrifty",
-    name: "Thrifty",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Thrifty_Car_Rental_logo.svg/200px-Thrifty_Car_Rental_logo.svg.png",
-    description: "性价比租车首选",
-    website: "https://www.thrifty.com",
-    features: ["超值价格", "Blue Chip会员", "简单预订", "多地点还车"],
-    coverage: ["全球"],
-    vehicleTypes: ["经济型", "紧凑型", "SUV"],
-    rating: 4.2
-  },
-  {
-    id: "dollar",
-    name: "Dollar",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Dollar_Rent_A_Car_logo.svg/200px-Dollar_Rent_A_Car_logo.svg.png",
-    description: "经济实惠的租车服务",
-    website: "https://www.dollar.com",
-    features: ["低价租车", "Express会员", "简单流程", "多车型选择"],
-    coverage: ["北美", "欧洲"],
-    vehicleTypes: ["经济型", "中型车", "SUV"],
-    rating: 4.1
-  },
-  {
-    id: "rentalcars",
-    name: "Rentalcars.com",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Rentalcars.com_logo.svg/200px-Rentalcars.com_logo.svg.png",
-    description: "全球租车比价平台，价格最优",
-    website: "https://www.rentalcars.com",
-    features: ["比价搜索", "免费取消", "价格保证", "中文客服"],
-    coverage: ["全球"],
-    vehicleTypes: ["全部类型"],
-    rating: 4.5
-  },
-  {
-    id: "zipcar",
-    name: "Zipcar",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Zipcar_logo.svg/200px-Zipcar_logo.svg.png",
-    description: "分时租车领导者，按小时计费",
-    website: "https://www.zipcar.com",
-    features: ["按小时租", "城市网点", "包含保险", "即时预订"],
-    coverage: ["北美", "欧洲城市"],
-    vehicleTypes: ["小型车", "SUV", "电动车"],
-    rating: 4.3
-  },
-  {
-    id: "turo",
-    name: "Turo",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Turo_logo.svg/200px-Turo_logo.svg.png",
-    description: "P2P汽车共享平台，车型丰富独特",
-    website: "https://www.turo.com",
-    features: ["独特车型", "本地车主", "灵活取还", "全险保障"],
-    coverage: ["北美", "欧洲", "英国"],
-    vehicleTypes: ["全部类型", "跑车", "经典车"],
-    rating: 4.6
-  },
-  {
-    id: "getaround",
-    name: "Getaround",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Getaround_logo.svg/200px-Getaround_logo.svg.png",
-    description: "即时汽车共享，无需见面取钥匙",
-    website: "https://www.getaround.com",
-    features: ["即时预订", "Connect技术", "按分钟计费", "城市便捷"],
-    coverage: ["北美", "欧洲城市"],
-    vehicleTypes: ["经济型", "SUV", "豪华车"],
-    rating: 4.4
-  },
-  {
-    id: "carzonrent",
-    name: "Carzonrent",
-    logo: "https://via.placeholder.com/200x60?text=Carzonrent",
-    description: "印度最大租车公司",
-    website: "https://www.carzonrent.com",
-    features: ["印度全境", "带司机服务", "机场接送", "企业方案"],
-    coverage: ["印度"],
-    vehicleTypes: ["轿车", "SUV", "豪华车"],
-    rating: 4.2
+    id: 'europcar',
+    name: 'Europcar',
+    nameEn: 'Europcar',
+    logo: 'https://www.europcar.com/favicon.ico',
+    baseUrl: 'https://www.europcar.com',
+    searchUrlTemplate: 'https://www.europcar.com/car-rental',
+    region: 'international',
+    features: ['Europe Advantage', 'Green Travel', 'Business Service'],
+    rating: 4.4,
+    color: '#00ADEF'
   }
 ];
 
-// 热门租车城市
-export interface CarRentalCity {
-  id: string;
+export interface PopularCarCity {
   city: string;
+  cityEn: string;
   country: string;
   image: string;
-  avgPrice: number;
-  currency: string;
-  rating: number;
-  supplierCount: number;
-  popularRoutes: string[];
-  tags: string[];
+  lowestPrice: number;
+  carTypes: string[];
 }
 
-export const carRentalCities: CarRentalCity[] = [
-  {
-    id: "losangeles",
-    city: "Los Angeles",
-    country: "United States",
-    image: "https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=800",
-    avgPrice: 45,
-    currency: "USD",
-    rating: 4.6,
-    supplierCount: 25,
-    popularRoutes: ["洛杉矶-旧金山", "洛杉矶-拉斯维加斯", "洛杉矶-圣地亚哥"],
-    tags: ["自驾天堂", "好莱坞", "海滩"]
-  },
-  {
-    id: "miami",
-    city: "Miami",
-    country: "United States",
-    image: "https://images.unsplash.com/photo-1535498730771-e735b998cd64?w=800",
-    avgPrice: 40,
-    currency: "USD",
-    rating: 4.5,
-    supplierCount: 22,
-    popularRoutes: ["迈阿密-奥兰多", "迈阿密-基韦斯特", "迈阿密-坦帕"],
-    tags: ["海滩", "夜生活", "艺术装饰"]
-  },
-  {
-    id: "paris",
-    city: "Paris",
-    country: "France",
-    image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800",
-    avgPrice: 55,
-    currency: "EUR",
-    rating: 4.4,
-    supplierCount: 18,
-    popularRoutes: ["巴黎-凡尔赛", "巴黎-卢瓦尔河谷", "巴黎-香槟区"],
-    tags: ["浪漫", "艺术", "美食"]
-  },
-  {
-    id: "rome",
-    city: "Rome",
-    country: "Italy",
-    image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800",
-    avgPrice: 50,
-    currency: "EUR",
-    rating: 4.5,
-    supplierCount: 16,
-    popularRoutes: ["罗马-佛罗伦萨", "罗马-那不勒斯", "罗马-托斯卡纳"],
-    tags: ["古迹", "美食", "自驾"]
-  },
-  {
-    id: "london",
-    city: "London",
-    country: "United Kingdom",
-    image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800",
-    avgPrice: 60,
-    currency: "GBP",
-    rating: 4.3,
-    supplierCount: 20,
-    popularRoutes: ["伦敦-牛津", "伦敦-剑桥", "伦敦-巴斯"],
-    tags: ["历史", "皇室", "文化"]
-  },
-  {
-    id: "dubai",
-    city: "Dubai",
-    country: "United Arab Emirates",
-    image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800",
-    avgPrice: 35,
-    currency: "AED",
-    rating: 4.7,
-    supplierCount: 15,
-    popularRoutes: ["迪拜-阿布扎比", "迪拜-沙迦", "迪拜-富查伊拉"],
-    tags: ["奢华", "沙漠", "购物"]
-  },
-  {
-    id: "sydney",
-    city: "Sydney",
-    country: "Australia",
-    image: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800",
-    avgPrice: 50,
-    currency: "AUD",
-    rating: 4.6,
-    supplierCount: 14,
-    popularRoutes: ["悉尼-蓝山", "悉尼-堪培拉", "悉尼-猎人谷"],
-    tags: ["海滩", "自然", "自驾"]
-  },
-  {
-    id: "capetown",
-    city: "Capetown",
-    country: "South Africa",
-    image: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=800",
-    avgPrice: 30,
-    currency: "ZAR",
-    rating: 4.5,
-    supplierCount: 12,
-    popularRoutes: ["开普敦-花园大道", "开普敦-斯泰伦博斯", "开普敦-赫曼努斯"],
-    tags: ["海景", "葡萄酒", "野生动物"]
-  },
-  {
-    id: "tokyo",
-    city: "Tokyo",
-    country: "Japan",
-    image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800",
-    avgPrice: 70,
-    currency: "JPY",
-    rating: 4.4,
-    supplierCount: 17,
-    popularRoutes: ["东京-富士山", "东京-箱根", "东京-轻井泽"],
-    tags: ["现代", "传统", "美食"]
-  },
-  {
-    id: "shanghai",
-    city: "Shanghai",
-    country: "China",
-    image: "https://images.unsplash.com/photo-1548919973-5cef591cdbc9?w=800",
-    avgPrice: 40,
-    currency: "CNY",
-    rating: 4.5,
-    supplierCount: 19,
-    popularRoutes: ["上海-杭州", "上海-苏州", "上海-乌镇"],
-    tags: ["都市", "江南", "美食"]
-  },
-  {
-    id: "bangkok",
-    city: "Bangkok",
-    country: "Thailand",
-    image: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800",
-    avgPrice: 25,
-    currency: "THB",
-    rating: 4.3,
-    supplierCount: 13,
-    popularRoutes: ["曼谷-芭提雅", "曼谷-华欣", "曼谷-大城"],
-    tags: ["寺庙", "美食", "按摩"]
-  },
-  {
-    id: "barcelona",
-    city: "Barcelona",
-    country: "Spain",
-    image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800",
-    avgPrice: 45,
-    currency: "EUR",
-    rating: 4.6,
-    supplierCount: 15,
-    popularRoutes: ["巴塞罗那-蒙特塞拉特", "巴塞罗那-锡切斯", "巴塞罗那-赫罗纳"],
-    tags: ["建筑", "海滩", "美食"]
-  }
+export const popularCarCities: PopularCarCity[] = [
+  { city: 'Los Angeles', cityEn: 'Los Angeles', country: 'USA', image: 'https://www.tripsavvy.com/thmb/UfG0_2WB67pErEqfIQMvEjV4W20=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-947698310-1729da81e58f40058a9e45ba82532d57-2f992696318c42cbbd595ef3ec1043fd.jpg', lowestPrice: 180, carTypes: ['Economy', 'SUV', 'Convertible'] },
+  { city: 'Paris', cityEn: 'Paris', country: 'France', image: 'https://as2.ftcdn.net/v2/jpg/02/14/74/11/1000_F_214741146_jApjeGkU3GSPSpLhzyMsupP7frpAh1XH.jpg', lowestPrice: 220, carTypes: ['Compact', 'Luxury'] },
+  { city: 'Tokyo', cityEn: 'Tokyo', country: 'Japan', image: 'https://t4.ftcdn.net/jpg/02/51/12/11/360_F_251121174_5xQyUCqSrkswyLHbM9Ne8DQ8Qb0o1HGw.jpg', lowestPrice: 150, carTypes: ['K-car', 'Hybrid'] },
+  { city: 'Sydney', cityEn: 'Sydney', country: 'Australia', image: 'https://upload.wikimedia.org/wikipedia/commons/a/a0/Sydney_Australia._%2821339175489%29.jpg', lowestPrice: 120, carTypes: ['SUV', 'RV'] },
+  { city: 'Dubai', cityEn: 'Dubai', country: 'UAE', image: 'https://ww3.rics.org/content/dam/rics/images/modus/built-environment/november-2021/burj-khalifa/Modus_nov21_burjkhalifa_header_v2.jpg', lowestPrice: 280, carTypes: ['Luxury', 'Sports', 'SUV'] },
+  { city: 'London', cityEn: 'London', country: 'UK', image: 'https://www.guidelondon.org.uk/wp-content/uploads/2021/03/Palace-of-Westminster-and-Big-Ben-as-viewed-from-the-Thames-River.jpg', lowestPrice: 200, carTypes: ['Compact', 'Electric'] },
+  { city: 'Rome', cityEn: 'Rome', country: 'Italy', image: 'https://cdn-imgix.headout.com/media/images/f7b985a3c53e91cb3b189e22bc5ec760-Ruins%20colosseum%20.jpg?auto=format&w=900&h=500&q=90', lowestPrice: 160, carTypes: ['Small', 'Convertible'] },
+  { city: 'New York', cityEn: 'New York', country: 'USA', image: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0e/a4/59/20/photo5jpg.jpg?w=900&h=500&s=1', lowestPrice: 240, carTypes: ['SUV', 'Luxury'] },
 ];
 
-// 按覆盖区域获取平台
-export function getPlatformsByCoverage(coverage: string): CarPlatform[] {
-  return carPlatforms.filter(p => p.coverage.includes(coverage) || p.coverage.includes("全球"));
-}
+export const carTypes = [
+  { id: 'economy', name: 'Economy', nameEn: 'Economy', icon: '🚗' },
+  { id: 'compact', name: 'Compact', nameEn: 'Compact', icon: '🚙' },
+  { id: 'midsize', name: 'Midsize', nameEn: 'Midsize', icon: '🚘' },
+  { id: 'suv', name: 'SUV', nameEn: 'SUV', icon: '🚐' },
+  { id: 'luxury', name: 'Luxury', nameEn: 'Luxury', icon: '🏎️' },
+  { id: 'van', name: 'Van', nameEn: 'Van', icon: '🚐' },
+  { id: 'convertible', name: 'Convertible', nameEn: 'Convertible', icon: '🚗' },
+];
+
+export const generateCarSearchUrl = (platform: CarPlatform, params: {
+  pickupLocation?: string;
+  returnLocation?: string;
+  pickupDate?: string;
+  returnDate?: string;
+  driverAge?: number;
+  carType?: string;
+}): string => {
+  const { pickupLocation, returnLocation, pickupDate, returnDate, driverAge } = params;
+  
+  switch (platform.id) {
+    case 'rentalcars':
+      return `https://www.rentalcars.com/SearchResults.do?enabler=&country=&city=&dropCity=&locationName=${encodeURIComponent(pickupLocation || '')}&dropLocationName=${encodeURIComponent(returnLocation || pickupLocation || '')}&pickupDate=${pickupDate || ''}&returnDate=${returnDate || ''}&driverAge=${driverAge || 25}`;
+    case 'expedia-car':
+      return `https://www.expedia.com/carsearch?locn=${encodeURIComponent(pickupLocation || '')}&loc2=${encodeURIComponent(returnLocation || pickupLocation || '')}&date1=${pickupDate || ''}&date2=${returnDate || ''}&age=${driverAge || 25}`;
+    case 'booking-car':
+      return `https://www.booking.com/car/index.html?aid=304142&label=gen173nr-1FCAEoggI46AdIM1gEaGyIAQGYATG4AQfIAQzYAQHoAQH4AQKIAgGoAgO4AqC-j7EGwAIB0gIkMTM3ZWRkYjYtYjUyZS00MjY2LWEzZmEtY2Y1YjBhODUzYjU52AIF4AIB&sid=&pickup=${encodeURIComponent(pickupLocation || '')}&return=${encodeURIComponent(returnLocation || pickupLocation || '')}&pickupDate=${pickupDate || ''}&returnDate=${returnDate || ''}`;
+    case 'kayak-car':
+      return `https://www.kayak.com/cars/${encodeURIComponent(pickupLocation || '')}/${pickupDate || ''}/${returnDate || ''}?r=${encodeURIComponent(returnLocation || pickupLocation || '')}`;
+    case 'enterprise':
+      return `https://www.enterprise.com/car-rental/locations/search?loc=${encodeURIComponent(pickupLocation || '')}&date=${pickupDate || ''}`;
+    case 'hertz':
+      return `https://www.hertz.com/rentacar/reservation?pickupLocation=${encodeURIComponent(pickupLocation || '')}&returnLocation=${encodeURIComponent(returnLocation || pickupLocation || '')}&pickupDate=${pickupDate || ''}&returnDate=${returnDate || ''}`;
+    case 'avis':
+      return `https://www.avis.com/car-reservation?location=${encodeURIComponent(pickupLocation || '')}&returnLocation=${encodeURIComponent(returnLocation || pickupLocation || '')}&pickupDate=${pickupDate || ''}&returnDate=${returnDate || ''}`;
+    case 'europcar':
+      return `https://www.europcar.com/car-rental?pickupLocation=${encodeURIComponent(pickupLocation || '')}&returnLocation=${encodeURIComponent(returnLocation || pickupLocation || '')}&pickupDate=${pickupDate || ''}&returnDate=${returnDate || ''}`;
+    default:
+      return platform.searchUrlTemplate;
+  }
+};
