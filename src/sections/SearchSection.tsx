@@ -96,7 +96,7 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
       enterDestination: 'Enter destination',
       enterCity: 'Enter city',
       selectBrand: 'Select hotel brand',
-      selectDate: 'Select date',
+      selectDate: 'MM/DD/YYYY',
       adult: 'Adult',
       pleaseEnter: 'Enter city',
       allBrands: 'All Brands',
@@ -175,7 +175,25 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
     return domesticCities.some(dc => cityName.toLowerCase().includes(dc.toLowerCase()));
   };
 
-  const today = new Date().toISOString().split('T')[0];
+  const formatDateInput = (value: string): string => {
+    const digits = value.replace(/\D/g, '').slice(0, 8);
+    if (digits.length >= 6) {
+      return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`;
+    } else if (digits.length >= 4) {
+      return `${digits.slice(0, 2)}/${digits.slice(2, 4)}`;
+    } else if (digits.length >= 2) {
+      return `${digits.slice(0, 2)}${digits.length > 2 ? '/' + digits.slice(2) : ''}`;
+    }
+    return digits;
+  };
+
+  const handleDepartureDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDepartureDate(formatDateInput(e.target.value));
+  };
+
+  const handleReturnDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setReturnDate(formatDateInput(e.target.value));
+  };
 
   const handleSearchClick = () => {
     onSearch({
@@ -394,7 +412,7 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
             </div>
           )}
 
-          {/* 日期 - 手动输入 */}
+          {/* 日期 - 手动输入 MM/DD/YYYY */}
           <div className="md:col-span-2">
             <label className="block text-xs font-medium text-slate-400 mb-1 uppercase tracking-wide">
               {serviceType === 'hotels' ? t.checkIn : serviceType === 'cars' ? t.pickup : t.departure}
@@ -402,10 +420,11 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
             <div className="relative">
               <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <Input
-                type="date"
+                type="text"
                 value={departureDate}
-                min={today}
-                onChange={(e) => setDepartureDate(e.target.value)}
+                onChange={handleDepartureDateChange}
+                placeholder={t.selectDate}
+                maxLength={10}
                 className="pl-10 h-14 bg-white border-2 border-slate-200 rounded-xl text-base font-medium focus:border-sky-500 focus:ring-0 transition-colors"
               />
             </div>
@@ -420,10 +439,11 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <Input
-                  type="date"
+                  type="text"
                   value={returnDate}
-                  min={departureDate || today}
-                  onChange={(e) => setReturnDate(e.target.value)}
+                  onChange={handleReturnDateChange}
+                  placeholder={t.selectDate}
+                  maxLength={10}
                   className="pl-10 h-14 bg-white border-2 border-slate-200 rounded-xl text-base font-medium focus:border-sky-500 focus:ring-0 transition-colors"
                 />
               </div>
