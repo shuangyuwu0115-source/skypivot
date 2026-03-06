@@ -29,7 +29,7 @@ interface SearchParams {
 function App() {
   const [serviceType, setServiceType] = useState<ServiceType>('flights');
   const [hasSearched, setHasSearched] = useState(false);
-  const [language, setLanguage] = useState<'zh' | 'en'>('zh');
+  const [language, setLanguage] = useState<'zh' | 'en'>('en');
   
   const [searchParams, setSearchParams] = useState<SearchParams>({
     from: '',
@@ -52,7 +52,9 @@ function App() {
     }, 100);
   };
 
-  const [language, setLanguage] = useState<'zh' | 'en'>('en');
+  const toggleLanguage = () => {
+    setLanguage(prev => prev === 'zh' ? 'en' : 'zh');
+  };
 
   const t = {
     zh: {
