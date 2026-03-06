@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { Search, Calendar, Users, MapPin, Car, Train, Plane, Building2, ArrowRightLeft, Hotel, X, ChevronDown } from 'lucide-react';
+import { Search, Calendar, Users, MapPin, Car, Train, Plane, Building2, ArrowRightLeft, Hotel, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface SearchParams {
   from: string;
@@ -59,8 +57,8 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [hotelBrand, setHotelBrand] = useState('');
-  const [departureDate, setDepartureDate] = useState<Date | undefined>(undefined);
-  const [returnDate, setReturnDate] = useState<Date | undefined>(undefined);
+  const [departureDate, setDepartureDate] = useState('');
+  const [returnDate, setReturnDate] = useState('');
   const [passengers, setPassengers] = useState(1);
   const [tripType, setTripType] = useState<'roundTrip' | 'oneWay'>('roundTrip');
   const [cabinClass, setCabinClass] = useState<'economy' | 'business' | 'first'>('economy');
@@ -177,18 +175,15 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
     return domesticCities.some(dc => cityName.toLowerCase().includes(dc.toLowerCase()));
   };
 
-  const formatDateDisplay = (date: Date | undefined): string => {
-    if (!date) return '';
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  };
+  const today = new Date().toISOString().split('T')[0];
 
   const handleSearchClick = () => {
     onSearch({
       from,
       to,
       hotelBrand,
-      departureDate: formatDateDisplay(departureDate),
-      returnDate: formatDateDisplay(returnDate),
+      departureDate,
+      returnDate,
       passengers,
       tripType,
       cabinClass,
@@ -399,31 +394,21 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
             </div>
           )}
 
-          {/* 日期选择器 - 简化版 */}
+          {/* 日期 - 手动输入 */}
           <div className="md:col-span-2">
             <label className="block text-xs font-medium text-slate-400 mb-1 uppercase tracking-wide">
               {serviceType === 'hotels' ? t.checkIn : serviceType === 'cars' ? t.pickup : t.departure}
             </label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="w-full h-14 bg-white border-2 border-slate-200 rounded-xl px-4 flex items-center gap-3 hover:border-sky-500 transition-colors text-left">
-                  <Calendar className="w-5 h-5 text-slate-400" />
-                  <span className={`text-base font-medium ${departureDate ? 'text-slate-800' : 'text-slate-400'}`}>
-                    {departureDate ? formatDateDisplay(departureDate) : t.selectDate}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={departureDate}
-                  onSelect={setDepartureDate}
-                  disabled={(date) => date < new Date()}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Input
+                type="date"
+                value={departureDate}
+                min={today}
+                onChange={(e) => setDepartureDate(e.target.value)}
+                className="pl-10 h-14 bg-white border-2 border-slate-200 rounded-xl text-base font-medium focus:border-sky-500 focus:ring-0 transition-colors"
+              />
+            </div>
           </div>
 
           {/* 返回日期 */}
@@ -432,26 +417,16 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
               <label className="block text-xs font-medium text-slate-400 mb-1 uppercase tracking-wide">
                 {serviceType === 'hotels' ? t.checkOut : serviceType === 'cars' ? t.dropoff : t.return}
               </label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button className="w-full h-14 bg-white border-2 border-slate-200 rounded-xl px-4 flex items-center gap-3 hover:border-sky-500 transition-colors text-left">
-                    <Calendar className="w-5 h-5 text-slate-400" />
-                    <span className={`text-base font-medium ${returnDate ? 'text-slate-800' : 'text-slate-400'}`}>
-                      {returnDate ? formatDateDisplay(returnDate) : t.selectDate}
-                    </span>
-                    <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarComponent
-                    mode="single"
-                    selected={returnDate}
-                    onSelect={setReturnDate}
-                    disabled={(date) => date < (departureDate || new Date())}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Input
+                  type="date"
+                  value={returnDate}
+                  min={departureDate || today}
+                  onChange={(e) => setReturnDate(e.target.value)}
+                  className="pl-10 h-14 bg-white border-2 border-slate-200 rounded-xl text-base font-medium focus:border-sky-500 focus:ring-0 transition-colors"
+                />
+              </div>
             </div>
           )}
 
