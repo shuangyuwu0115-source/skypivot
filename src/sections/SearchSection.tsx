@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { Search, Calendar, Users, MapPin, Car, Train, Plane, Building2, ArrowRightLeft, Hotel, X } from 'lucide-react';
+import { Search, Calendar, Users, MapPin, Car, Train, Plane, Building2, ArrowRightLeft, Hotel, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
 
 interface SearchParams {
   from: string;
@@ -21,57 +24,44 @@ interface SearchSectionProps {
   language?: 'zh' | 'en';
 }
 
-const domesticCities = [
-  '北京', '上海', '广州', '深圳', '成都', '杭州', '西安', '重庆', '武汉', '南京',
-  '天津', '苏州', '长沙', '郑州', '沈阳', '青岛', '宁波', '东莞', '无锡', '厦门',
-  '福州', '济南', '大连', '昆明', '合肥', '佛山', '哈尔滨', '长春', '石家庄', '南宁',
-  '贵阳', '南昌', '乌鲁木齐', '兰州', '海口', '三亚', '呼和浩特', '银川', '西宁', '拉萨',
-  '台北', '香港', '澳门'
+// 英文城市列表
+const popularCities = [
+  { city: 'Beijing', code: 'PEK', country: 'China' },
+  { city: 'Shanghai', code: 'SHA', country: 'China' },
+  { city: 'Guangzhou', code: 'CAN', country: 'China' },
+  { city: 'Shenzhen', code: 'SZX', country: 'China' },
+  { city: 'Chengdu', code: 'CTU', country: 'China' },
+  { city: 'Hangzhou', code: 'HGH', country: 'China' },
+  { city: 'Tokyo', code: 'NRT', country: 'Japan' },
+  { city: 'Osaka', code: 'KIX', country: 'Japan' },
+  { city: 'Seoul', code: 'ICN', country: 'Korea' },
+  { city: 'Singapore', code: 'SIN', country: 'Singapore' },
+  { city: 'Bangkok', code: 'BKK', country: 'Thailand' },
+  { city: 'London', code: 'LHR', country: 'UK' },
+  { city: 'Paris', code: 'CDG', country: 'France' },
+  { city: 'New York', code: 'JFK', country: 'USA' },
+  { city: 'Los Angeles', code: 'LAX', country: 'USA' },
 ];
 
 const hotelBrands = [
-  { name: '万豪', nameEn: 'Marriott' },
-  { name: '希尔顿', nameEn: 'Hilton' },
-  { name: '洲际', nameEn: 'IHG' },
-  { name: '雅高', nameEn: 'Accor' },
-  { name: '凯悦', nameEn: 'Hyatt' },
-  { name: '香格里拉', nameEn: 'Shangri-La' },
-  { name: '锦江', nameEn: 'Jinjiang' },
-  { name: '华住', nameEn: 'Huazhu' },
-  { name: '如家', nameEn: 'Home Inn' },
-  { name: '全季', nameEn: 'Ji Hotel' },
-  { name: '亚朵', nameEn: 'Atour' },
-  { name: '喜来登', nameEn: 'Sheraton' },
-  { name: '威斯汀', nameEn: 'Westin' },
-  { name: '丽思卡尔顿', nameEn: 'Ritz-Carlton' },
-  { name: '四季', nameEn: 'Four Seasons' }
+  { name: 'Marriott', nameEn: 'Marriott' },
+  { name: 'Hilton', nameEn: 'Hilton' },
+  { name: 'IHG', nameEn: 'IHG' },
+  { name: 'Accor', nameEn: 'Accor' },
+  { name: 'Hyatt', nameEn: 'Hyatt' },
+  { name: 'Shangri-La', nameEn: 'Shangri-La' },
+  { name: 'Sheraton', nameEn: 'Sheraton' },
+  { name: 'Westin', nameEn: 'Westin' },
+  { name: 'Ritz-Carlton', nameEn: 'Ritz-Carlton' },
+  { name: 'Four Seasons', nameEn: 'Four Seasons' }
 ];
 
-// 热门城市列表
-const popularCities = [
-  { city: '北京', code: 'PEK', country: '中国' },
-  { city: '上海', code: 'SHA', country: '中国' },
-  { city: '广州', code: 'CAN', country: '中国' },
-  { city: '深圳', code: 'SZX', country: '中国' },
-  { city: '成都', code: 'CTU', country: '中国' },
-  { city: '杭州', code: 'HGH', country: '中国' },
-  { city: '东京', code: 'NRT', country: '日本' },
-  { city: '大阪', code: 'KIX', country: '日本' },
-  { city: '首尔', code: 'ICN', country: '韩国' },
-  { city: '新加坡', code: 'SIN', country: '新加坡' },
-  { city: '曼谷', code: 'BKK', country: '泰国' },
-  { city: '伦敦', code: 'LHR', country: '英国' },
-  { city: '巴黎', code: 'CDG', country: '法国' },
-  { city: '纽约', code: 'JFK', country: '美国' },
-  { city: '洛杉矶', code: 'LAX', country: '美国' },
-];
-
-export function SearchSection({ serviceType, onSearch, language = 'zh' }: SearchSectionProps) {
+export function SearchSection({ serviceType, onSearch, language = 'en' }: SearchSectionProps) {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [hotelBrand, setHotelBrand] = useState('');
-  const [departureDate, setDepartureDate] = useState('');
-  const [returnDate, setReturnDate] = useState('');
+  const [departureDate, setDepartureDate] = useState<Date | undefined>(undefined);
+  const [returnDate, setReturnDate] = useState<Date | undefined>(undefined);
   const [passengers, setPassengers] = useState(1);
   const [tripType, setTripType] = useState<'roundTrip' | 'oneWay'>('roundTrip');
   const [cabinClass, setCabinClass] = useState<'economy' | 'business' | 'first'>('economy');
@@ -82,39 +72,6 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
   const [toResults, setToResults] = useState<typeof popularCities>([]);
 
   const t = {
-    zh: {
-      from: '出发地',
-      to: '目的地',
-      destination: '目的地',
-      hotelBrand: '酒店品牌',
-      departure: '出发日期',
-      return: '返回日期',
-      checkIn: '入住日期',
-      checkOut: '离店日期',
-      pickup: '取车日期',
-      dropoff: '还车日期',
-      passengers: '乘客',
-      rooms: '房间',
-      search: '搜索',
-      roundTrip: '往返',
-      oneWay: '单程',
-      economy: '经济舱',
-      business: '商务舱',
-      firstClass: '头等舱',
-      pickupLocation: '取车地点',
-      dropoffLocation: '还车地点',
-      driverAge: '驾驶员年龄',
-      whereTo: '您想去哪里？',
-      whereFrom: '您从哪里出发？',
-      enterDestination: '输入目的地',
-      enterCity: '输入城市',
-      selectBrand: '选择酒店品牌',
-      selectDate: '选择日期',
-      adult: '成人',
-      pleaseEnter: '请输入城市',
-      allBrands: '全部品牌',
-      popularDestinations: '热门目的地'
-    },
     en: {
       from: 'From',
       to: 'To',
@@ -158,7 +115,8 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
       return;
     }
     const results = popularCities.filter(c => 
-      c.city.includes(query) || c.code.toLowerCase().includes(query.toLowerCase())
+      c.city.toLowerCase().includes(query.toLowerCase()) || 
+      c.code.toLowerCase().includes(query.toLowerCase())
     );
     setFromResults(results);
     setShowFromDropdown(results.length > 0);
@@ -172,7 +130,8 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
       return;
     }
     const results = popularCities.filter(c => 
-      c.city.includes(query) || c.code.toLowerCase().includes(query.toLowerCase())
+      c.city.toLowerCase().includes(query.toLowerCase()) || 
+      c.code.toLowerCase().includes(query.toLowerCase())
     );
     setToResults(results);
     setShowToDropdown(results.length > 0);
@@ -185,7 +144,7 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
       return;
     }
     const results = hotelBrands.filter(b => 
-      b.name.includes(query) || b.nameEn.toLowerCase().includes(query.toLowerCase())
+      b.name.toLowerCase().includes(query.toLowerCase())
     );
     setShowBrandDropdown(results.length > 0);
   };
@@ -215,18 +174,22 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
 
   const isDomesticDestination = (city: string): boolean => {
     const cityName = city.split('(')[0].trim();
-    return domesticCities.some(dc => cityName.includes(dc));
+    const domesticCities = ['Beijing', 'Shanghai', 'Guangzhou', 'Shenzhen', 'Chengdu', 'Hangzhou', 'Xi\'an', 'Chongqing', 'Wuhan', 'Nanjing'];
+    return domesticCities.some(dc => cityName.toLowerCase().includes(dc.toLowerCase()));
   };
 
-  const today = new Date().toISOString().split('T')[0];
+  const formatDateMMDDYYYY = (date: Date | undefined): string => {
+    if (!date) return '';
+    return format(date, 'MM/dd/yyyy');
+  };
 
   const handleSearchClick = () => {
     onSearch({
       from,
       to,
       hotelBrand,
-      departureDate,
-      returnDate,
+      departureDate: formatDateMMDDYYYY(departureDate),
+      returnDate: formatDateMMDDYYYY(returnDate),
       passengers,
       tripType,
       cabinClass,
@@ -246,7 +209,7 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
   return (
     <div className="w-full max-w-5xl mx-auto px-4 pb-12">
       <div className="bg-white rounded-2xl shadow-2xl p-6 border border-slate-100">
-        {/* 服务类型标签 - Skyscanner 风格 */}
+        {/* 服务类型标签 */}
         {serviceType === 'flights' && (
           <div className="flex gap-2 mb-6">
             <div className="flex bg-slate-100 rounded-lg p-1">
@@ -283,7 +246,7 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
           </div>
         )}
 
-        {/* 搜索表单 - Skyscanner 风格 */}
+        {/* 搜索表单 */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
           {/* 出发地 */}
           {serviceType !== 'hotels' && (
@@ -429,7 +392,6 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
                         className="w-full px-4 py-3 text-left hover:bg-sky-50 border-b border-slate-50 last:border-0 flex items-center justify-between"
                       >
                         <span className="font-semibold text-slate-800">{brand.name}</span>
-                        <span className="text-sm text-slate-400">{brand.nameEn}</span>
                       </button>
                     ))}
                   </div>
@@ -438,21 +400,31 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
             </div>
           )}
 
-          {/* 日期 */}
+          {/* 日期选择器 - Popover 日历 */}
           <div className="md:col-span-2">
             <label className="block text-xs font-medium text-slate-400 mb-1 uppercase tracking-wide">
               {serviceType === 'hotels' ? t.checkIn : serviceType === 'cars' ? t.pickup : t.departure}
             </label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <Input
-                type="date"
-                value={departureDate}
-                min={today}
-                onChange={(e) => setDepartureDate(e.target.value)}
-                className="pl-10 h-14 bg-white border-2 border-slate-200 rounded-xl text-base font-medium focus:border-sky-500 focus:ring-0 transition-colors"
-              />
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="w-full h-14 bg-white border-2 border-slate-200 rounded-xl text-left px-4 flex items-center gap-3 hover:border-sky-500 transition-colors">
+                  <Calendar className="w-5 h-5 text-slate-400" />
+                  <span className={`text-base font-medium ${departureDate ? 'text-slate-800' : 'text-slate-400'}`}>
+                    {departureDate ? formatDateMMDDYYYY(departureDate) : t.selectDate}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={departureDate}
+                  onSelect={setDepartureDate}
+                  disabled={(date) => date < new Date()}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
           {/* 返回日期 */}
@@ -461,16 +433,26 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
               <label className="block text-xs font-medium text-slate-400 mb-1 uppercase tracking-wide">
                 {serviceType === 'hotels' ? t.checkOut : serviceType === 'cars' ? t.dropoff : t.return}
               </label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <Input
-                  type="date"
-                  value={returnDate}
-                  min={departureDate || today}
-                  onChange={(e) => setReturnDate(e.target.value)}
-                  className="pl-10 h-14 bg-white border-2 border-slate-200 rounded-xl text-base font-medium focus:border-sky-500 focus:ring-0 transition-colors"
-                />
-              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="w-full h-14 bg-white border-2 border-slate-200 rounded-xl text-left px-4 flex items-center gap-3 hover:border-sky-500 transition-colors">
+                    <Calendar className="w-5 h-5 text-slate-400" />
+                    <span className={`text-base font-medium ${returnDate ? 'text-slate-800' : 'text-slate-400'}`}>
+                      {returnDate ? formatDateMMDDYYYY(returnDate) : t.selectDate}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <CalendarComponent
+                    mode="single"
+                    selected={returnDate}
+                    onSelect={setReturnDate}
+                    disabled={(date) => date < (departureDate || new Date())}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           )}
 
@@ -509,7 +491,7 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
                   className="w-full pl-10 h-14 bg-white border-2 border-slate-200 rounded-xl text-base font-medium focus:border-sky-500 focus:ring-0 appearance-none"
                 >
                   {[1,2,3,4,5].map(n => (
-                    <option key={n} value={n}>{n} 间</option>
+                    <option key={n} value={n}>{n} Rooms</option>
                   ))}
                 </select>
               </div>
@@ -517,7 +499,7 @@ export function SearchSection({ serviceType, onSearch, language = 'zh' }: Search
           )}
         </div>
 
-        {/* 搜索按钮 - Skyscanner 风格 */}
+        {/* 搜索按钮 */}
         <div className="mt-6">
           <Button 
             onClick={handleSearchClick}
