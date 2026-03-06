@@ -177,9 +177,9 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
     return domesticCities.some(dc => cityName.toLowerCase().includes(dc.toLowerCase()));
   };
 
-  const formatDateMMDDYYYY = (date: Date | undefined): string => {
+  const formatDateDisplay = (date: Date | undefined): string => {
     if (!date) return '';
-    return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   const handleSearchClick = () => {
@@ -187,8 +187,8 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
       from,
       to,
       hotelBrand,
-      departureDate: formatDateMMDDYYYY(departureDate),
-      returnDate: formatDateMMDDYYYY(returnDate),
+      departureDate: formatDateDisplay(departureDate),
+      returnDate: formatDateDisplay(returnDate),
       passengers,
       tripType,
       cabinClass,
@@ -399,28 +399,19 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
             </div>
           )}
 
-          {/* 日期选择器 - 修复对齐 */}
+          {/* 日期选择器 - 简化版 */}
           <div className="md:col-span-2">
             <label className="block text-xs font-medium text-slate-400 mb-1 uppercase tracking-wide">
               {serviceType === 'hotels' ? t.checkIn : serviceType === 'cars' ? t.pickup : t.departure}
             </label>
             <Popover>
               <PopoverTrigger asChild>
-                <button className="w-full h-14 bg-white border-2 border-slate-200 rounded-xl px-4 flex items-center justify-between hover:border-sky-500 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-5 h-5 text-slate-400 flex-shrink-0" />
-                    <div className="flex flex-col items-start leading-tight">
-                      <span className={`text-sm font-medium ${departureDate ? 'text-slate-800' : 'text-slate-400'}`}>
-                        {departureDate ? formatDateMMDDYYYY(departureDate) : t.selectDate}
-                      </span>
-                      {departureDate && (
-                        <span className="text-xs text-slate-500">
-                          {departureDate.toLocaleDateString('en-US', { weekday: 'short' })}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                <button className="w-full h-14 bg-white border-2 border-slate-200 rounded-xl px-4 flex items-center gap-3 hover:border-sky-500 transition-colors text-left">
+                  <Calendar className="w-5 h-5 text-slate-400" />
+                  <span className={`text-base font-medium ${departureDate ? 'text-slate-800' : 'text-slate-400'}`}>
+                    {departureDate ? formatDateDisplay(departureDate) : t.selectDate}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -443,21 +434,12 @@ export function SearchSection({ serviceType, onSearch, language = 'en' }: Search
               </label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <button className="w-full h-14 bg-white border-2 border-slate-200 rounded-xl px-4 flex items-center justify-between hover:border-sky-500 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <Calendar className="w-5 h-5 text-slate-400 flex-shrink-0" />
-                      <div className="flex flex-col items-start leading-tight">
-                        <span className={`text-sm font-medium ${returnDate ? 'text-slate-800' : 'text-slate-400'}`}>
-                          {returnDate ? formatDateMMDDYYYY(returnDate) : t.selectDate}
-                        </span>
-                        {returnDate && (
-                          <span className="text-xs text-slate-500">
-                            {returnDate.toLocaleDateString('en-US', { weekday: 'short' })}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                  <button className="w-full h-14 bg-white border-2 border-slate-200 rounded-xl px-4 flex items-center gap-3 hover:border-sky-500 transition-colors text-left">
+                    <Calendar className="w-5 h-5 text-slate-400" />
+                    <span className={`text-base font-medium ${returnDate ? 'text-slate-800' : 'text-slate-400'}`}>
+                      {returnDate ? formatDateDisplay(returnDate) : t.selectDate}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
