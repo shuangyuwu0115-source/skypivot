@@ -1,11 +1,11 @@
-import type { Platform, PopularRoute } from '@/types'
-import { airports } from './airports'
+import type { Platform, PopularRoute } from '@/types';
+import { airports } from './airports';
 
 // 从 airports 数据生成 airportCodes
 export const airportCodes: Record<string, string> = airports.reduce((acc, airport) => {
-  acc[airport.city] = airport.code
-  return acc
-}, {} as Record<string, string>)
+  acc[airport.city] = airport.code;
+  return acc;
+}, {} as Record<string, string>);
 
 export const platforms: Platform[] = [
   {
@@ -128,7 +128,7 @@ export const platforms: Platform[] = [
     rating: 4.9,
     color: '#4285F4'
   }
-]
+];
 
 export const popularRoutes: PopularRoute[] = [
   { from: '北京', to: '上海', fromCode: 'PEK', toCode: 'SHA', image: 'https://images.unsplash.com/photo-1538428494232-9c0d8a3ab403?w=400', lowestPrice: 450 },
@@ -139,39 +139,102 @@ export const popularRoutes: PopularRoute[] = [
   { from: '上海', to: '纽约', fromCode: 'PVG', toCode: 'JFK', image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400', lowestPrice: 4280 },
   { from: '成都', to: '洛杉矶', fromCode: 'CTU', toCode: 'LAX', image: 'https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=400', lowestPrice: 3680 },
   { from: '香港', to: '伦敦', fromCode: 'HKG', toCode: 'LHR', image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400', lowestPrice: 3980 },
-]
+];
+
+// 城市名称到携程城市代码的映射
+const ctripCityCodeMap: Record<string, string> = {
+  '北京': 'BJS',
+  '上海': 'SHA',
+  '广州': 'CAN',
+  '深圳': 'SZX',
+  '成都': 'CTU',
+  '杭州': 'HGH',
+  '武汉': 'WUH',
+  '西安': 'SIA',
+  '重庆': 'CKG',
+  '南京': 'NKG',
+  '天津': 'TSN',
+  '香港': 'HKG',
+  '台北': 'TPE',
+  '东京': 'TYO',
+  '大阪': 'OSA',
+  '首尔': 'SEL',
+  '新加坡': 'SIN',
+  '曼谷': 'BKK',
+  '吉隆坡': 'KUL',
+  '洛杉矶': 'LAX',
+  '纽约': 'NYC',
+  '旧金山': 'SFO',
+  '伦敦': 'LON',
+  '巴黎': 'PAR',
+  '法兰克福': 'FRA',
+  '悉尼': 'SYD',
+  '墨尔本': 'MEL',
+};
+
+// 获取携程城市代码
+const getCtripCityCode = (city: string): string => {
+  return ctripCityCodeMap[city] || city;
+};
+
+// 格式化日期为 YYYYMMDD
+const formatDate = (dateStr: string): string => {
+  return dateStr.replace(/-/g, '');
+};
 
 export const generateSearchUrl = (platform: Platform, params: {
-  from?: string
-  to?: string
-  departDate?: string
-  returnDate?: string
-  passengers?: number
+  from?: string;
+  to?: string;
+  departDate?: string;
+  returnDate?: string;
+  passengers?: number;
 }): string => {
-  const { from, to, departDate } = params
+  const { from, to, departDate, returnDate, passengers } = params;
+  const fromCode = from ? getCtripCityCode(from) : '';
+  const toCode = to ? getCtripCityCode(to) : '';
+  const formattedDate = departDate ? formatDate(departDate) : '';
+  const formattedReturnDate = returnDate ? formatDate(returnDate) : '';
   
   switch (platform.id) {
     case 'ctrip':
-      return `https://flights.ctrip.com/online/channel/domestic?depcity=${from || ''}&arrcity=${to || ''}&depdate=${departDate || ''}`
+      // 携程支持城市代码搜索
+      return `https://flights.ctrip.com/online/list/oneway-${fromCode}-${toCode}?depdate=${formattedDate}&cabin=Y_S_C_F`;
     case 'qunar':
-      return `https://flight.qunar.com/site/oneway_list.htm?searchDepartureAirport=${from || ''}&searchArrivalAirport=${to || ''}&searchDepartureTime=${departDate || ''}`
+      // 去哪儿需要机场代码
+      return `https://flight.qunar.com/site/oneway_list.htm?searchDepartureAirport=${fromCode}&searchArrivalAirport=${toCode}&searchDepartureTime=${departDate || ''}`;
     case 'fliggy':
-      return `https://s.fliggy.com/flight/search?depCity=${from || ''}&arrCity=${to || ''}&depDate=${departDate || ''}`
+      // 飞猪支持城市名称
+      return `https://s.fliggy.com/flight/search?depCity=${encodeURIComponent(from || '')}&arrCity=${encodeURIComponent(to || '')}&depDate=${departDate || ''}`;
     case 'tongcheng':
-      return `https://www.ly.com/flight/search?dep=${from || ''}&arr=${to || ''}&date=${departDate || ''}`
+      // 同程支持城市名称
+      return `https://www.ly.com/flight/search?dep=${encodeURIComponent(from || '')}&arr=${encodeURIComponent(to || '')}&date=${departDate || ''}`;
     case 'booking':
-      return `https://www.booking.com/flights/${from || ''}.${to || ''}.${departDate || ''}`
+      // Booking 需要 IATA 机场代码
+      const fromAirport = from ? (airportCodes[from] || from) : '';
+      const toAirport = to ? (airportCodes[to] || to) : '';
+      return `https://www.booking.com/flights/${fromAirport}.${toAirport}.${formattedDate}`;
     case 'expedia':
-      return `https://www.expedia.com/Flights-Search?trip=oneway&leg1=from:${from || ''},to:${to || ''},departure:${departDate || ''}`
+      // Expedia 格式
+      return `https://www.expedia.com/Flights-Search?trip=oneway&leg1=from:${encodeURIComponent(from || '')},to:${encodeURIComponent(to || '')},departure:${departDate || ''}`;
     case 'skyscanner':
-      return `https://www.skyscanner.com/transport/flights/${from || ''}/${to || ''}/${departDate?.replace(/-/g, '') || ''}`
+      // Skyscanner 需要 IATA 代码和 YYYYMMDD 格式日期
+      const skyFrom = from ? (airportCodes[from] || from) : '';
+      const skyTo = to ? (airportCodes[to] || to) : '';
+      return `https://www.skyscanner.com/transport/flights/${skyFrom}/${skyTo}/${formattedDate}`;
     case 'kayak':
-      return `https://www.kayak.com/flights/${from || ''}-${to || ''}/${departDate?.replace(/-/g, '') || ''}`
+      // Kayak 需要 IATA 代码
+      const kayakFrom = from ? (airportCodes[from] || from) : '';
+      const kayakTo = to ? (airportCodes[to] || to) : '';
+      return `https://www.kayak.com/flights/${kayakFrom}-${kayakTo}/${formattedDate}`;
     case 'trip':
-      return `https://www.trip.com/flights/${from || ''}-to-${to || ''}/tickets-sheap-${from || ''}-${to || ''}?dcity=${from || ''}&acity=${to || ''}&ddate=${departDate || ''}`
+      // Trip.com 支持城市名称
+      return `https://www.trip.com/flights/${encodeURIComponent(from || '')}-to-${encodeURIComponent(to || '')}?dcity=${encodeURIComponent(from || '')}&acity=${encodeURIComponent(to || '')}&ddate=${departDate || ''}`;
     case 'google-flights':
-      return `https://www.google.com/travel/flights/search`
+      // Google Flights 需要 IATA 代码
+      const googleFrom = from ? (airportCodes[from] || from) : '';
+      const googleTo = to ? (airportCodes[to] || to) : '';
+      return `https://www.google.com/travel/flights/search?tfs=CBwQAhooagwIAxIIL20vMDF4Mjh3EgoyMDI1LTAzLTAxcgwIAxIIL20vMDF4Mjh3GgJQU0gSBwjmDxC5-zU&hl=zh-CN&curr=CNY`;
     default:
-      return platform.searchUrlTemplate
+      return platform.searchUrlTemplate;
   }
-}
+};
