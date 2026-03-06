@@ -18,32 +18,32 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-2", className)}
+      className={cn("p-3 w-[280px]", className)}
       classNames={{
-        months: "flex flex-col sm:flex-row space-y-2 sm:space-x-2 sm:space-y-0",
+        months: "flex flex-col space-y-2",
         month: "space-y-2",
-        caption: "flex justify-center pt-1 relative items-center px-8",
+        caption: "flex justify-center pt-1 relative items-center px-6",
         caption_label: "text-sm font-semibold",
         nav: "flex items-center gap-1",
         nav_button: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-6 w-6 p-0 opacity-70 hover:opacity-100 hover:bg-slate-100"
+          "h-6 w-6 p-0 opacity-70 hover:opacity-100"
         ),
-        nav_button_previous: "absolute left-1",
-        nav_button_next: "absolute right-1",
+        nav_button_previous: "absolute left-0",
+        nav_button_next: "absolute right-0",
         table: "w-full border-collapse",
-        head_row: "flex justify-between mb-1",
-        head_cell: "w-8 h-6 flex items-center justify-center text-[10px] font-medium text-slate-400 uppercase",
-        row: "flex justify-between mt-0.5",
+        head_row: "flex w-full justify-between",
+        head_cell: "w-8 h-6 flex items-center justify-center text-[10px] font-medium text-slate-400",
+        row: "flex w-full justify-between mt-1",
         cell: cn(
-          "relative p-0 text-center text-xs focus-within:relative focus-within:z-20",
+          "w-8 h-8 p-0 text-center text-sm relative",
           props.mode === "range"
             ? "[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
             : "[&:has([aria-selected])]:rounded-md"
         ),
         day: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-7 w-7 p-0 font-normal text-xs hover:bg-sky-100 hover:text-sky-600 aria-selected:opacity-100 rounded-full"
+          "h-8 w-8 p-0 font-normal text-sm hover:bg-sky-100 hover:text-sky-600 aria-selected:opacity-100 rounded-full"
         ),
         day_range_start: "day-range-start",
         day_range_end: "day-range-end",
