@@ -12,7 +12,7 @@ interface SearchParams {
   hotelBrand: string;
   departureDate: string;
   returnDate: string;
-  passengers: number;
+  passengers: number; 
   tripType: 'roundTrip' | 'oneWay';
   cabinClass: 'economy' | 'business' | 'first';
   isDomestic: boolean;
